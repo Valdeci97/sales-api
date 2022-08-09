@@ -6,3 +6,14 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Product {
+  id String @id @default(uuid())
+  name String
+  price Int
+  quantity Int
+  create_at DateTime @default(now())
+  update_at DateTime @default(now())
+
+  @@map("products")
+}
