@@ -5,4 +5,5 @@ export interface Model<T> {
   list(): Promise<T[]>;
   listById(obj: T): Promise<T | null>;
   update(obj: T): Promise<T | ServiceResponse>;
+  destroy(obj: T): Promise<ServiceResponse>
 }

@@ -49,4 +49,11 @@ export default class ProductService implements Model<Product> {
     });
     return updateProduct;
   }
+
+  public async destroy({ id }: Product): Promise<ServiceResponse> {
+    const product = await this.model.product.findFirst({ where: { id } });
+    if (!product) return [404, { message: 'Product not found!' }];
+    await this.model.product.delete({ where: { id } });
+    return [204, { message: 'Product deleted successfully!' }];
+  }
 }
