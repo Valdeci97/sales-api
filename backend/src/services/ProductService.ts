@@ -28,4 +28,9 @@ export default class ProductService implements Model<IProduct> {
   public async list(): Promise<IProduct[]> {
     return this.model.product.findMany();
   }
+
+  public async listById({ id }: IProduct): Promise<IProduct | null> {
+    const product = this.model.product.findFirst({ where: { id } });
+    return product;
+  }
 }
