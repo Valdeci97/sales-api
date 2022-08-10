@@ -1,9 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 import { database } from '../database';
 import { Model } from '../interfaces/ModelInterface';
-import { IProduct } from '../interfaces/ProductInterface';
+import { Product } from '../types/ProductType';
 
-export default class ProductService implements Model<IProduct> {
+export default class ProductService implements Model<Product> {
   private model: PrismaClient;
 
   constructor(model = database) {
@@ -14,7 +14,7 @@ export default class ProductService implements Model<IProduct> {
     name,
     price,
     quantity,
-  }: IProduct): Promise<IProduct | null> {
+  }: Product): Promise<Product | null> {
     const product = await this.model.product.create({
       data: {
         name,
@@ -25,11 +25,11 @@ export default class ProductService implements Model<IProduct> {
     return product;
   }
 
-  public async list(): Promise<IProduct[]> {
+  public async list(): Promise<Product[]> {
     return this.model.product.findMany();
   }
 
-  public async listById({ id }: IProduct): Promise<IProduct | null> {
+  public async listById({ id }: Product): Promise<Product | null> {
     const product = this.model.product.findFirst({ where: { id } });
     return product;
   }
