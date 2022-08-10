@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { database } from '../database';
 import { Model } from '../interfaces/ModelInterface';
 import { Product } from '../types/ProductType';
+import { ServiceResponse } from '../types/ServiceResponse';
 
 export default class ProductService implements Model<Product> {
   private model: PrismaClient;
@@ -32,5 +33,20 @@ export default class ProductService implements Model<Product> {
   public async listById({ id }: Product): Promise<Product | null> {
     const product = this.model.product.findFirst({ where: { id } });
     return product;
+  }
+
+  public async update({
+    id,
+    name,
+    price,
+    quantity,
+  }: Product): Promise<Product | ServiceResponse> {
+    const product = this.model.product.findFirst({ where: { id } });
+    if (!product) return [404, { message: 'Product not found!' }];
+    const updateProduct = this.model.product.update({
+      where: { id },
+      data: { name, price, quantity },
+    });
+    return updateProduct;
   }
 }
