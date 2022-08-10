@@ -24,4 +24,8 @@ export default class ProductService implements Model<IProduct> {
     });
     return product;
   }
+
+  public async list(): Promise<IProduct[]> {
+    return this.model.product.findMany();
+  }
 }
