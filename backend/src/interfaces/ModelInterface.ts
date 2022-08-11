@@ -1,9 +1,9 @@
-import { ServiceResponse } from '../types/ServiceResponse';
+import { ProductResponse } from '../types/ProductResponse';
 
 export interface Model<T> {
-  create(obj: T): Promise<T | null>;
+  create(obj: T): Promise<ProductResponse>;
   list(): Promise<T[]>;
-  listById(obj: T): Promise<T | null>;
-  update(obj: T): Promise<T | ServiceResponse>;
-  destroy(obj: T): Promise<ServiceResponse>
+  listById(id: string): Promise<T | null>;
+  update(obj: T): Promise<ProductResponse>;
+  destroy(id: string): Promise<ProductResponse>
 }
