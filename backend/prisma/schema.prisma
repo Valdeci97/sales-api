@@ -8,12 +8,10 @@ datasource db {
 }
 
 model Product {
-  id String @id @default(uuid())
-  name String
-  price Int
+  id       String @id @default(uuid())
+  name     String
+  price    Float
   quantity Int
-  create_at DateTime @default(now())
-  update_at DateTime @default(now())
 
   @@map("products")
 }
