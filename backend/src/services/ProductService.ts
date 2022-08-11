@@ -2,7 +2,11 @@ import { PrismaClient } from '@prisma/client';
 import { database } from '../database';
 import { Model } from '../interfaces/ModelInterface';
 import { Product } from '../types/ProductType';
-import { ServiceResponse } from '../types/ServiceResponse';
+import { ProductResponse } from '../types/ProductResponse';
+
+const PRODUCT_NOT_FOUND = 'Product not found!';
+const NOT_FOUND = 'Product not found!';
+const CREATED = 'Product created successfully';
 
 export default class ProductService implements Model<Product> {
   private model: PrismaClient;
@@ -15,24 +19,23 @@ export default class ProductService implements Model<Product> {
     name,
     price,
     quantity,
-  }: Product): Promise<Product | null> {
-    const product = await this.model.product.create({
+  }: Product): Promise<ProductResponse> {
+    await this.model.product.create({
       data: {
         name,
         price,
         quantity,
       },
     });
-    return product;
+    return ProductService.createProductResponse(201, CREATED);
   }
 
   public async list(): Promise<Product[]> {
     return this.model.product.findMany();
   }
 
-  public async listById({ id }: Product): Promise<Product | null> {
-    const product = this.model.product.findFirst({ where: { id } });
-    return product;
+  public async listById(id: string): Promise<Product | null> {
+    return this.model.product.findFirst({ where: { id } });
   }
 
   public async update({
@@ -40,20 +43,30 @@ export default class ProductService implements Model<Product> {
     name,
     price,
     quantity,
-  }: Product): Promise<Product | ServiceResponse> {
+  }: Product): Promise<ProductResponse> {
     const product = this.model.product.findFirst({ where: { id } });
-    if (!product) return [404, { message: 'Product not found!' }];
-    const updateProduct = this.model.product.update({
+    if (!product) {
+      return ProductService.createProductResponse(404, PRODUCT_NOT_FOUND);
+    }
+    const updateProduct = await this.model.product.update({
       where: { id },
       data: { name, price, quantity },
     });
-    return updateProduct;
+    return ProductService.createProductResponse(200, '', updateProduct);
   }
 
-  public async destroy({ id }: Product): Promise<ServiceResponse> {
+  public async destroy(id: string): Promise<ProductResponse> {
     const product = await this.model.product.findFirst({ where: { id } });
-    if (!product) return [404, { message: 'Product not found!' }];
+    if (!product) return ProductService.createProductResponse(404, NOT_FOUND);
     await this.model.product.delete({ where: { id } });
-    return [204, { message: 'Product deleted successfully!' }];
+    return ProductService.createProductResponse(204);
+  }
+
+  private static createProductResponse(
+    status: number,
+    message: string = '',
+    data: Product = { id: '', name: '', price: 0, quantity: 0 }
+  ): ProductResponse {
+    return [status, message, data];
   }
 }

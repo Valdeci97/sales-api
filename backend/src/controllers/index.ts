@@ -15,15 +15,15 @@ export default abstract class Controller<T> {
 
   public abstract create(
     req: RequestWithBody<T>,
-    res: Response<T>,
+    res: Response,
     next: NextFunction
-  ): Response<typeof res | undefined>;
+  ): any;
 
   public read = async (
-    req: Request,
+    _req: Request,
     res: Response<T[]>,
     next: NextFunction
-  ): Promise<typeof res | undefined> => {
+  ): Promise<typeof res | void> => {
     try {
       const obj = await this.service.list();
       return res.status(200).json(obj);
@@ -35,18 +35,14 @@ export default abstract class Controller<T> {
   public abstract readOne(
     req: Request<{ id: string }>,
     res: Response<T>,
-    nex: NextFunction
-  ): Promise<typeof res | undefined>;
+    next: NextFunction
+  ): any;
 
   public abstract update(
     req: Request<T>,
-    res: Response<T>,
+    res: Response,
     next: NextFunction
-  ): Promise<typeof res | undefined>;
+  ): any;
 
-  public abstract delete(
-    req: RequestWithBody<T>,
-    res: Response<T>,
-    next: NextFunction
-  ): Promise<typeof res | undefined>;
+  public abstract delete(req: Request, res: Response, next: NextFunction): any;
 }
