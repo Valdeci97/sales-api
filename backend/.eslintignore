@@ -3,3 +3,4 @@ dist
 build
 /*js
 src/interfaces/**
+src/middlewares/**
