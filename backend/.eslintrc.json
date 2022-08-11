@@ -23,7 +23,8 @@
       "camelcase": ["error", {
         "allow": ["required_error", "invalid_type_error"]
       }],
-      "prettier/prettier": "error"
+      "prettier/prettier": "error",
+      "no-underscore-dangle": "off"
   },
   "settings": {
     "import/resolver": {
