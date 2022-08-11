@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Router } from 'express';
 import cors from 'cors';
 
 export default class App {
@@ -10,7 +10,15 @@ export default class App {
     this.app.use(cors());
   }
 
-  public start(PORT: number | string = 3001) {
+  public start(PORT: number | string = 3001): void {
     this.app.listen(PORT, () => console.log('Server running at port:', PORT));
+  }
+
+  public addRouter(router: Router): void {
+    this.app.use(router);
+  }
+
+  public getApp(): express.Application {
+    return this.app;
   }
 }
