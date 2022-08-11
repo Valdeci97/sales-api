@@ -1,5 +1,6 @@
-import express, { Router } from 'express';
+import express, { Router, ErrorRequestHandler } from 'express';
 import cors from 'cors';
+import GlobalMiddleware from './middlewares';
 
 export default class App {
   public app: express.Application;
@@ -20,5 +21,11 @@ export default class App {
 
   public getApp(): express.Application {
     return this.app;
+  }
+
+  public addErrorMiddleware(
+    middleware: ErrorRequestHandler = new GlobalMiddleware().error
+  ): void {
+    this.app.use(middleware);
   }
 }

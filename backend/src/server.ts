@@ -45,4 +45,6 @@ productRouter.deleteRoute(
 
 server.addRouter(productRouter.router);
 
+server.addErrorMiddleware();
+
 export default server;
