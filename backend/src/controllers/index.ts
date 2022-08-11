@@ -39,7 +39,7 @@ export default abstract class Controller<T> {
   ): any;
 
   public abstract update(
-    req: Request<T>,
+    req: RequestWithBody<T>,
     res: Response,
     next: NextFunction
   ): any;

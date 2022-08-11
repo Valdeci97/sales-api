@@ -27,6 +27,7 @@ export default class ProductController extends Controller<Product> {
       const [code, message] = await this.service.create(body);
       return res.status(code).json({ message });
     } catch (err) {
+      console.log(err);
       next(new HttpException());
     }
   };
@@ -47,7 +48,7 @@ export default class ProductController extends Controller<Product> {
   };
 
   public update = async (
-    req: Request<Product>,
+    req: RequestWithBody<Product>,
     res: Response,
     next: NextFunction
   ): Promise<Response | void> => {

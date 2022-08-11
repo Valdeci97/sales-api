@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { RequestHandler, Router } from 'express';
 
 import Controller from '../controllers';
 
@@ -9,14 +9,82 @@ export default class CustomRouter<T> {
     this.router = Router();
   }
 
-  public addRoute(
+  public readRoute(
     controller: Controller<T>,
     route: string = controller.route
   ): void {
     this.router.get(route, controller.read);
-    this.router.get(`${route}/:id`, controller.readOne);
-    this.router.post(route, controller.create);
-    this.router.put(`${route}/:id`, controller.update);
-    this.router.delete(`${route}/:id`, controller.delete);
+  }
+
+  public readOneRoute(
+    controller: Controller<T>,
+    route: string = controller.route,
+    ...middlewares: RequestHandler[]
+  ): void {
+    this.router.get(`${route}/:id`, ...middlewares, controller.readOne);
+  }
+
+  public createRoute(
+    controller: Controller<T>,
+    route: string = controller.route,
+    ...middlewares: RequestHandler[]
+  ): void {
+    this.router.post(route, ...middlewares, controller.create);
+  }
+
+  public updateRoute(
+    controller: Controller<T>,
+    route: string = controller.route,
+    ...middlewares: RequestHandler[]
+  ): void {
+    this.router.put(`${route}/:id`, ...middlewares, controller.update);
+  }
+
+  public deleteRoute(
+    controller: Controller<T>,
+    route: string = controller.route,
+    ...middlewares: RequestHandler[]
+  ): void {
+    this.router.delete(`${route}/:id`, ...middlewares, controller.delete);
+  }
+
+  public addGetRoute(
+    reqFunc: RequestHandler,
+    route: string,
+    ...middlewares: RequestHandler[]
+  ): void {
+    this.router.get(route, ...middlewares, reqFunc);
+  }
+
+  public addPostRoute(
+    reqFunc: RequestHandler,
+    route: string,
+    ...middlewares: RequestHandler[]
+  ): void {
+    this.router.post(route, ...middlewares, reqFunc);
+  }
+
+  public addPutRoute(
+    reqFunc: RequestHandler,
+    route: string,
+    ...middlewares: RequestHandler[]
+  ): void {
+    this.router.put(route, ...middlewares, reqFunc);
+  }
+
+  public addPatchRoute(
+    reqFunc: RequestHandler,
+    route: string,
+    ...middlewares: RequestHandler[]
+  ): void {
+    this.router.patch(route, ...middlewares, reqFunc);
+  }
+
+  public addDeleteRoute(
+    reqFunc: RequestHandler,
+    route: string,
+    ...middlewares: RequestHandler[]
+  ): void {
+    this.router.delete(route, ...middlewares, reqFunc);
   }
 }
