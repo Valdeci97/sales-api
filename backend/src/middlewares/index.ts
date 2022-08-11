@@ -8,6 +8,7 @@ export default class GlobalMiddleware {
     res: Response,
     _next: NextFunction
   ): Response => {
+    console.log(err);
     const code = Number(err.status) || 500;
     const message = err.message || 'Something went wrong.';
     return res.status(code).json({ message });
