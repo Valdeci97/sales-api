@@ -1,20 +1,10 @@
 import { RequestHandler, Router } from 'express';
 
-import Controller from '../controllers';
-
-export default class CustomRouter<T> {
+export default class CustomRouter {
   public router: Router;
 
   constructor() {
     this.router = Router();
-  }
-
-  public readOneRoute(
-    controller: Controller<T>,
-    route: string = controller.route,
-    ...middlewares: RequestHandler[]
-  ): void {
-    this.router.get(`${route}/:id`, ...middlewares, controller.readOne);
   }
 
   public addGetRoute(

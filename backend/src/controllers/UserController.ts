@@ -31,7 +31,7 @@ export default class UserController extends Controller<User> {
   };
 
   public readOne = async (
-    req: Request<{ id: string }>,
+    req: Request,
     res: Response<User>,
     next: NextFunction
   ): Promise<Response | void> => {
@@ -57,7 +57,7 @@ export default class UserController extends Controller<User> {
 
   public delete = async (
     _req: Request,
-    res: Response<any, Record<string, any>>,
+    res: Response,
     _next: NextFunction
   ): Promise<Response | void> => {
     const users = await this.service.list();

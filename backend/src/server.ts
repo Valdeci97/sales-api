@@ -3,22 +3,20 @@ import App from './app';
 import ProductController from './controllers/ProductController';
 import GuidMiddleware from './middlewares/GuidMiddleware';
 import ProductMiddleware from './middlewares/ProductMiddleware';
-import { Product } from './types/ProductType';
 import UserController from './controllers/UserController';
-import { User } from './types/UserType';
 
 const server = new App();
 const guidMiddleware = new GuidMiddleware();
 
 const productController = new ProductController();
 const productMiddleware = new ProductMiddleware();
-const productRouter = new CustomRouter<Product>();
+const productRouter = new CustomRouter();
 
 productRouter.addGetRoute(productController.route, productController.read);
 
-productRouter.readOneRoute(
-  productController,
-  productController.route,
+productRouter.addGetRoute(
+  `${productController.route}/:id`,
+  productController.readOne,
   guidMiddleware.validateGuid
 );
 
@@ -46,11 +44,11 @@ productRouter.addDeleteRoute(
 );
 
 const userController = new UserController();
-const userRouter = new CustomRouter<User>();
+const userRouter = new CustomRouter();
 
 userRouter.addGetRoute(userController.route, userController.read);
 
-userRouter.readOneRoute(userController);
+userRouter.addGetRoute(`${userController.route}/:id`, userController.readOne);
 
 userRouter.addPostRoute(userController.route, userController.create);
 
