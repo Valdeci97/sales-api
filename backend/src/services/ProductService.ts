@@ -1,17 +1,18 @@
 import { PrismaClient } from '@prisma/client';
 import { database } from '../database';
-import { Model } from '../interfaces/ModelInterface';
 import { Product } from '../types/ProductType';
-import { ProductResponse } from '../types/ProductResponse';
+import { ServiceResponse } from '../types/ServiceResponse';
+import Service from '.';
 
 const PRODUCT_NOT_FOUND = 'Product not found!';
 const NOT_FOUND = 'Product not found!';
 const CREATED = 'Product created successfully';
 
-export default class ProductService implements Model<Product> {
+export default class ProductService extends Service<Product> {
   private model: PrismaClient;
 
   constructor(model = database) {
+    super({ id: '', name: '', price: 0, quantity: 0 });
     this.model = model;
   }
 
@@ -19,7 +20,7 @@ export default class ProductService implements Model<Product> {
     name,
     price,
     quantity,
-  }: Product): Promise<ProductResponse> {
+  }: Product): Promise<ServiceResponse<Product>> {
     await this.model.product.create({
       data: {
         name,
@@ -27,7 +28,7 @@ export default class ProductService implements Model<Product> {
         quantity,
       },
     });
-    return ProductService.createProductResponse(201, CREATED);
+    return this.createResponse(201, CREATED);
   }
 
   public async list(): Promise<Product[]> {
@@ -43,30 +44,22 @@ export default class ProductService implements Model<Product> {
     name,
     price,
     quantity,
-  }: Product): Promise<ProductResponse> {
+  }: Product): Promise<ServiceResponse<Product>> {
     const product = this.model.product.findFirst({ where: { id } });
     if (!product) {
-      return ProductService.createProductResponse(404, PRODUCT_NOT_FOUND);
+      return this.createResponse(404, PRODUCT_NOT_FOUND);
     }
     const updateProduct = await this.model.product.update({
       where: { id },
       data: { name, price, quantity },
     });
-    return ProductService.createProductResponse(200, '', updateProduct);
+    return this.createResponse(200, '', updateProduct);
   }
 
-  public async destroy(id: string): Promise<ProductResponse> {
+  public async destroy(id: string): Promise<ServiceResponse<Product>> {
     const product = await this.model.product.findFirst({ where: { id } });
-    if (!product) return ProductService.createProductResponse(404, NOT_FOUND);
+    if (!product) this.createResponse(404, NOT_FOUND);
     await this.model.product.delete({ where: { id } });
-    return ProductService.createProductResponse(204);
-  }
-
-  private static createProductResponse(
-    status: number,
-    message: string = '',
-    data: Product = { id: '', name: '', price: 0, quantity: 0 }
-  ): ProductResponse {
-    return [status, message, data];
+    return this.createResponse(204);
   }
 }
