@@ -15,3 +15,13 @@ model Product {
 
   @@map("products")
 }
+
+model User {
+  id       String  @id @default(uuid())
+  name     String
+  email    String  @unique
+  password String
+  avatar   String?
+
+  @@map("users")
+}
