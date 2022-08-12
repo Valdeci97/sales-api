@@ -1,13 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 import { hashSync } from 'bcryptjs';
 import Service from '.';
+import { database } from '../database';
 import { ServiceResponse } from '../types/ServiceResponse';
 import { User } from '../types/UserType';
 
 export default class UserService extends Service<User> {
   private model: PrismaClient;
 
-  constructor(model: PrismaClient) {
+  constructor(model: PrismaClient = database) {
     super({ id: '', name: '', email: '', password: '', avatar: '' });
     this.model = model;
   }
@@ -32,8 +33,14 @@ export default class UserService extends Service<User> {
     return this.createResponse(201, 'User created successfully!', user);
   }
 
-  async list(): Promise<User[]> {
-    return this.model.user.findMany();
+  async list(): Promise<Array<Partial<User>>> {
+    return this.model.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
   }
 
   async listById(id: string): Promise<User | null> {

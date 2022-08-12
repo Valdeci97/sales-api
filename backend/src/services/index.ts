@@ -18,7 +18,7 @@ export default abstract class Service<T> implements Model<T> {
 
   abstract create(_obj: T): Promise<ServiceResponse<T>>;
 
-  abstract list(): Promise<T[]>;
+  abstract list(): Promise<Array<T | Partial<T>>>;
 
   abstract listById(_id: string): Promise<T | null>;
 
