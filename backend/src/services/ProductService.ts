@@ -58,7 +58,7 @@ export default class ProductService extends Service<Product> {
 
   public async destroy(id: string): Promise<ServiceResponse<Product>> {
     const product = await this.model.product.findFirst({ where: { id } });
-    if (!product) this.createResponse(404, NOT_FOUND);
+    if (!product) return this.createResponse(404, NOT_FOUND);
     await this.model.product.delete({ where: { id } });
     return this.createResponse(204);
   }
