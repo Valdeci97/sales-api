@@ -21,14 +21,14 @@ export default class ProductService extends Service<Product> {
     price,
     quantity,
   }: Product): Promise<ServiceResponse<Product>> {
-    await this.model.product.create({
+    const product = await this.model.product.create({
       data: {
         name,
         price,
         quantity,
       },
     });
-    return this.createResponse(201, CREATED);
+    return this.createResponse(201, CREATED, product);
   }
 
   public async list(): Promise<Product[]> {

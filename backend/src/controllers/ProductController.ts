@@ -24,8 +24,8 @@ export default class ProductController extends Controller<Product> {
   ): Promise<Response | void> => {
     const { body } = req;
     try {
-      const [code, message] = await this.service.create(body);
-      return res.status(code).json({ message });
+      const [code, message, product] = await this.service.create(body);
+      return res.status(code).json({ message, user: product });
     } catch (err) {
       console.log(err);
       next(new HttpException());
