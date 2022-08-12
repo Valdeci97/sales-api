@@ -32,7 +32,7 @@ export default class ProductController extends Controller<Product> {
   };
 
   public readOne = async (
-    req: Request<{ id: string }>,
+    req: Request,
     res: Response<Product>,
     next: NextFunction
   ): Promise<Response | void> => {

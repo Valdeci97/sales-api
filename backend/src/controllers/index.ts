@@ -21,7 +21,7 @@ export default abstract class Controller<T> {
 
   public read = async (
     _req: Request,
-    res: Response<T[]>,
+    res: Response<Array<T | Partial<T>>>,
     next: NextFunction
   ): Promise<typeof res | void> => {
     try {
@@ -33,7 +33,7 @@ export default abstract class Controller<T> {
   };
 
   public abstract readOne(
-    req: Request<{ id: string }>,
+    req: Request,
     res: Response<T>,
     next: NextFunction
   ): any;
