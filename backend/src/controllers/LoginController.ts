@@ -15,7 +15,7 @@ export default class LoginController {
       const [code, message, user] = await this.service.login(body);
       if (message.length > 0) return res.status(code).json({ message });
       return res.status(code).json({ user });
-    } catch (error) {
+    } catch (err) {
       next(new HttpException());
     }
   };

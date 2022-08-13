@@ -106,7 +106,7 @@ export default class UserService extends Service<User> {
     const isSamePassword = await compare(password, user.password);
     if (!isSamePassword)
       return this.createUserToken(400, 'Incorrect/email or password!');
-    const token = JsonWebToken.generate(user.id);
+    const token = JsonWebToken.generate({ id: user.id });
     return this.createUserToken(200, '', {
       user: {
         id: user.id,

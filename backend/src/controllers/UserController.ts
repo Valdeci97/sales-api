@@ -22,7 +22,10 @@ export default class UserController extends Controller<User> {
     try {
       const [code, message, user] = await this.service.create(body);
       if (code === 409) return res.status(code).json({ message });
-      return res.status(code).json({ message, user });
+      return res.status(code).json({
+        message,
+        user: { id: user.id, name: user.name, avatar: user.avatar },
+      });
     } catch (err) {
       next(new HttpException());
     }
@@ -52,7 +55,9 @@ export default class UserController extends Controller<User> {
     try {
       const [code, message, user] = await this.service.update(body);
       if (message.length > 0) return res.status(code).json({ message });
-      return res.status(code).json({ user });
+      return res.status(code).json({
+        user: { id: user.id, name: user.name, avatar: user.avatar },
+      });
     } catch (err) {
       next(new HttpException());
     }
