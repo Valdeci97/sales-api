@@ -30,7 +30,7 @@ export default class UserController extends Controller<User> {
 
   public readOne = async (
     req: Request,
-    res: Response<User>,
+    res: Response<User | Partial<User>>,
     next: NextFunction
   ): Promise<Response | void> => {
     const { id } = req.params;

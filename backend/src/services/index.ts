@@ -20,7 +20,7 @@ export default abstract class Service<T> implements Model<T> {
 
   abstract list(): Promise<Array<T | Partial<T>>>;
 
-  abstract listById(_id: string): Promise<T | null>;
+  abstract listById(_id: string): Promise<Partial<T> | null>;
 
   abstract update(_obj: T): Promise<ServiceResponse<T>>;
 

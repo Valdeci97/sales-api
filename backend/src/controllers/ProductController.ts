@@ -33,7 +33,7 @@ export default class ProductController extends Controller<Product> {
 
   public readOne = async (
     req: Request,
-    res: Response<Product>,
+    res: Response<Product | Partial<Product>>,
     next: NextFunction
   ): Promise<Response | void> => {
     const { id } = req.params;

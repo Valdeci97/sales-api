@@ -34,7 +34,7 @@ export default abstract class Controller<T> {
 
   public abstract readOne(
     req: Request,
-    res: Response<T>,
+    res: Response<T | Partial<T>>,
     next: NextFunction
   ): any;
 
