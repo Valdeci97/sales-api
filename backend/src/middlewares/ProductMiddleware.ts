@@ -20,7 +20,7 @@ export default class ProductMiddleware {
     res: Response,
     next: NextFunction
   ): Response | void => {
-    const { error } = productPrice.validate(req.body);
+    const { error } = productPrice.validate(req.body, { convert: false });
     if (error) {
       const [code, message] = error.message.split('/');
       return res.status(Number(code)).json({ message });
@@ -33,7 +33,7 @@ export default class ProductMiddleware {
     res: Response,
     next: NextFunction
   ): Response | void => {
-    const { error } = productQuantity.validate(req.body);
+    const { error } = productQuantity.validate(req.body, { convert: false });
     if (error) {
       const [code, message] = error.message.split('/');
       return res.status(Number(code)).json({ message });
