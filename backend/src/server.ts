@@ -4,6 +4,7 @@ import ProductController from './controllers/ProductController';
 import GuidMiddleware from './middlewares/GuidMiddleware';
 import ProductMiddleware from './middlewares/ProductMiddleware';
 import UserController from './controllers/UserController';
+import UserMiddleware from './middlewares/UserMiddleware';
 
 const server = new App();
 const guidMiddleware = new GuidMiddleware();
@@ -44,17 +45,36 @@ productRouter.addDeleteRoute(
 );
 
 const userController = new UserController();
+const userMiddleware = new UserMiddleware();
 const userRouter = new CustomRouter();
 
 userRouter.addGetRoute(userController.route, userController.read);
 
-userRouter.addGetRoute(`${userController.route}/:id`, userController.readOne);
+userRouter.addGetRoute(
+  `${userController.route}/:id`,
+  userController.readOne,
+  guidMiddleware.validateGuid
+);
 
-userRouter.addPostRoute(userController.route, userController.create);
+userRouter.addPostRoute(
+  userController.route,
+  userController.create,
+  userMiddleware.validateName,
+  userMiddleware.validateEmail,
+  userMiddleware.validatePassword
+);
 
-userRouter.addPutRoute(`${userController.route}/:id`, userController.update);
+userRouter.addPutRoute(
+  `${userController.route}/:id`,
+  userController.update,
+  userMiddleware.validateName
+);
 
-userRouter.addDeleteRoute(`${userController.route}/:id`, userController.delete);
+userRouter.addDeleteRoute(
+  `${userController.route}/:id`,
+  userController.delete,
+  guidMiddleware.validateGuid
+);
 
 server.addRouter(productRouter.router);
 server.addRouter(userRouter.router);
