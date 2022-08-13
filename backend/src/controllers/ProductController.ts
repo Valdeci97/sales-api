@@ -74,7 +74,7 @@ export default class ProductController extends Controller<Product> {
     try {
       const [code, message] = await this.service.destroy(id);
       if (message.length > 0) return res.status(code).json({ message });
-      return res.status(204).end();
+      return res.status(code).end();
     } catch (err) {
       next(new HttpException());
     }

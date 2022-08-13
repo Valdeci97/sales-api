@@ -49,11 +49,11 @@ export default class ProductService extends Service<Product> {
     if (!product) {
       return this.createResponse(404, PRODUCT_NOT_FOUND);
     }
-    const updateProduct = await this.model.product.update({
+    const updatedProduct = await this.model.product.update({
       where: { id },
       data: { name, price, quantity },
     });
-    return this.createResponse(200, '', updateProduct);
+    return this.createResponse(200, '', updatedProduct);
   }
 
   public async destroy(id: string): Promise<ServiceResponse<Product>> {

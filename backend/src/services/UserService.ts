@@ -5,6 +5,8 @@ import { database } from '../database';
 import { ServiceResponse } from '../types/ServiceResponse';
 import { User } from '../types/UserType';
 
+const USER_NOT_FOUND = 'User does found!';
+
 export default class UserService extends Service<User> {
   private model: PrismaClient;
 
@@ -39,6 +41,7 @@ export default class UserService extends Service<User> {
         id: true,
         name: true,
         email: true,
+        avatar: true,
       },
     });
   }
@@ -47,12 +50,23 @@ export default class UserService extends Service<User> {
     return this.model.user.findFirst({ where: { id } });
   }
 
-  async update(_obj: User): Promise<ServiceResponse<User>> {
-    return this.createResponse(500);
+  async update({ id, name, avatar }: User): Promise<ServiceResponse<User>> {
+    const user = this.model.user.findFirst({ where: { id } });
+    if (!user) {
+      return this.createResponse(404, USER_NOT_FOUND);
+    }
+    const updatedUser = await this.model.user.update({
+      where: { id },
+      data: { name, avatar },
+    });
+    return this.createResponse(200, '', updatedUser);
   }
 
-  async destroy(_id: string): Promise<ServiceResponse<User>> {
-    return this.createResponse(500);
+  async destroy(id: string): Promise<ServiceResponse<User>> {
+    const user = this.model.user.findFirst({ where: { id } });
+    if (!user) return this.createResponse(404, USER_NOT_FOUND);
+    await this.model.user.delete({ where: { id } });
+    return this.createResponse(204);
   }
 
   private async findByEmail(email: string): Promise<User | null> {

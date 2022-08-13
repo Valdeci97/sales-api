@@ -21,9 +21,7 @@ export default class UserController extends Controller<User> {
     const { body } = req;
     try {
       const [code, message, user] = await this.service.create(body);
-      if (code === 409) {
-        return res.status(code).json({ message });
-      }
+      if (code === 409) return res.status(code).json({ message });
       return res.status(code).json({ message, user });
     } catch (err) {
       next(new HttpException());
@@ -46,22 +44,32 @@ export default class UserController extends Controller<User> {
   };
 
   public update = async (
-    _req: RequestWithBody<User>,
+    req: RequestWithBody<User>,
     res: Response,
-    _next: NextFunction
+    next: NextFunction
   ): Promise<Response | void> => {
-    const users = await this.service.list();
-    console.log(users);
-    return res.status(200).end();
+    const { body } = req;
+    try {
+      const [code, message, user] = await this.service.update(body);
+      if (message.length > 0) return res.status(code).json({ message });
+      return res.status(code).json({ user });
+    } catch (err) {
+      next(new HttpException());
+    }
   };
 
   public delete = async (
-    _req: Request,
+    req: Request,
     res: Response,
-    _next: NextFunction
+    next: NextFunction
   ): Promise<Response | void> => {
-    const users = await this.service.list();
-    console.log(users);
-    return res.status(200).end();
+    const { id } = req.params;
+    try {
+      const [code, message] = await this.service.destroy(id);
+      if (message.length > 0) return res.status(code).json({ message });
+      return res.status(code).end();
+    } catch (err) {
+      next(new HttpException());
+    }
   };
 }
