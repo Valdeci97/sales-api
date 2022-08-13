@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import HttpException from '../exceptions/HttpException';
+import { Token } from '../types/token';
 import JsonWebToken from '../utils/jwt';
 
 export default class TokenMiddleware {
@@ -14,6 +15,10 @@ export default class TokenMiddleware {
         return next(new HttpException(404, 'Token not found!'));
       }
       const token = JsonWebToken.decode(authorization);
+      const { id } = token as Token;
+      req.user = {
+        id,
+      }
       next();
     } catch (err) {
       next(new HttpException(401, 'Invalid token!'));
