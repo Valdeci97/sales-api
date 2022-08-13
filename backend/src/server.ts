@@ -5,6 +5,8 @@ import GuidMiddleware from './middlewares/GuidMiddleware';
 import ProductMiddleware from './middlewares/ProductMiddleware';
 import UserController from './controllers/UserController';
 import UserMiddleware from './middlewares/UserMiddleware';
+import LoginController from './controllers/LoginController';
+import TokenMiddleware from './middlewares/token';
 
 const server = new App();
 const guidMiddleware = new GuidMiddleware();
@@ -13,7 +15,13 @@ const productController = new ProductController();
 const productMiddleware = new ProductMiddleware();
 const productRouter = new CustomRouter();
 
-productRouter.addGetRoute(productController.route, productController.read);
+const tokenMiddleware = new TokenMiddleware();
+
+productRouter.addGetRoute(
+  productController.route,
+  productController.read,
+  tokenMiddleware.validate
+);
 
 productRouter.addGetRoute(
   `${productController.route}/:id`,
@@ -76,8 +84,14 @@ userRouter.addDeleteRoute(
   guidMiddleware.validateGuid
 );
 
+const loginController = new LoginController();
+const loginRouter = new CustomRouter();
+
+loginRouter.addPostRoute('/login', loginController.login);
+
 server.addRouter(productRouter.router);
 server.addRouter(userRouter.router);
+server.addRouter(loginRouter.router);
 
 server.addErrorMiddleware();
 
