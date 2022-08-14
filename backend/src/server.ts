@@ -72,8 +72,8 @@ userRouter.addPostRoute(
   userMiddleware.validatePassword
 );
 
-userRouter.addPutRoute(
-  `${userController.route}/:id`,
+userRouter.addPatchRoute(
+  `${userController.route}/:id/name`,
   userController.update,
   userMiddleware.validateName
 );

@@ -62,14 +62,14 @@ export default class UserService extends Service<User> {
     });
   }
 
-  async update({ id, name, avatar }: User): Promise<ServiceResponse<User>> {
+  async update({ id, name }: User): Promise<ServiceResponse<User>> {
     const user = this.model.user.findFirst({ where: { id } });
     if (!user) {
       return this.createResponse(404, USER_NOT_FOUND);
     }
     const updatedUser = await this.model.user.update({
       where: { id },
-      data: { name, avatar },
+      data: { name },
     });
     return this.createResponse(200, '', updatedUser);
   }
