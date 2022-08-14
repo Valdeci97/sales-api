@@ -6,7 +6,7 @@ import JsonWebToken from '../utils/jwt';
 export default class TokenMiddleware {
   public validate(
     req: Request,
-    res: Response,
+    _res: Response,
     next: NextFunction
   ): Response | void {
     try {
