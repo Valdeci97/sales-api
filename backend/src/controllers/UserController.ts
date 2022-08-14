@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import Controller from '.';
-import HttpException from '../exceptions/HttpException';
+import HttpException from '../utils/exceptions/HttpException';
 import { RequestWithBody } from '../interfaces/RequestWithBody';
 import UserService from '../services/UserService';
 import { User } from '../types/UserType';
