@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import HttpException from '../exceptions/HttpException';
+import HttpException from '../utils/exceptions/HttpException';
 import { Token } from '../types/token';
 import JsonWebToken from '../utils/jwt';
 

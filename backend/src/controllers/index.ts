@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { Request, Response, NextFunction } from 'express';
-import HttpException from '../exceptions/HttpException';
+import HttpException from '../utils/exceptions/HttpException';
 import { Model } from '../interfaces/ModelInterface';
 import { RequestWithBody } from '../interfaces/RequestWithBody';
 

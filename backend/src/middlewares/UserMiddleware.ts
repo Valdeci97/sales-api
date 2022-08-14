@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { userEmail, username, userPassword } from '../joiSchemas/user';
+import { userEmail, username, userPassword } from '../utils/joiSchemas/user';
 
 export default class UserMiddleware {
   public validateName = (

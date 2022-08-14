@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { uuidSchema } from '../joiSchemas/uuid';
+import { uuidSchema } from '../utils/joiSchemas/uuid';
 
 export default class GuidMiddleware {
   public validateGuid = (

@@ -1,6 +1,6 @@
 import { Response, NextFunction, Request } from 'express';
 import Controller from '.';
-import HttpException from '../exceptions/HttpException';
+import HttpException from '../utils/exceptions/HttpException';
 import { RequestWithBody } from '../interfaces/RequestWithBody';
 import ProductService from '../services/ProductService';
 import { Product } from '../types/ProductType';

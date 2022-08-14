@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { productName, productPrice, productQuantity } from '../joiSchemas/product';
+import { productName, productPrice, productQuantity } from '../utils/joiSchemas/product';
 
 export default class ProductMiddleware {
   public validateName = (
