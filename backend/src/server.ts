@@ -7,6 +7,7 @@ import UserController from './controllers/UserController';
 import UserMiddleware from './middlewares/UserMiddleware';
 import LoginController from './controllers/LoginController';
 import TokenMiddleware from './middlewares/token';
+import AvatarController from './controllers/AvatarController';
 
 const server = new App();
 const guidMiddleware = new GuidMiddleware();
@@ -89,9 +90,19 @@ const loginRouter = new CustomRouter();
 
 loginRouter.addPostRoute('/login', loginController.login);
 
+const avatarController = new AvatarController();
+const avatarRouter = new CustomRouter();
+
+avatarRouter.addPatchRoute(
+  'users/avatar',
+  avatarController.update,
+  tokenMiddleware.validate
+);
+
 server.addRouter(productRouter.router);
 server.addRouter(userRouter.router);
 server.addRouter(loginRouter.router);
+server.addRouter(avatarRouter.router);
 
 server.addErrorMiddleware();
 
