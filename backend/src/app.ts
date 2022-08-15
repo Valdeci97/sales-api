@@ -28,4 +28,8 @@ export default class App {
   ): void {
     this.app.use(middleware);
   }
+
+  public addStaticRoute(route: string, directory: string): void {
+    this.app.use(route, express.static(directory));
+  }
 }
