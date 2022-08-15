@@ -3,7 +3,11 @@ import AvatarService from '../services/AvatarService';
 import HttpException from '../utils/exceptions/HttpException';
 
 export default class AvatarController {
-  private service = new AvatarService();
+  private service: AvatarService;
+
+  constructor(service = new AvatarService()) {
+    this.service = service;
+  }
 
   public update = async (
     req: Request,

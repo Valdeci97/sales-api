@@ -1,9 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import HttpException from '../utils/exceptions/HttpException';
-import UserService from '../services/UserService';
+import LoginService from '../services/LoginService';
 
 export default class LoginController {
-  service = new UserService();
+  private service: LoginService;
+
+  constructor(service = new LoginService()) {
+    this.service = service;
+  }
 
   public login = async (
     req: Request,
