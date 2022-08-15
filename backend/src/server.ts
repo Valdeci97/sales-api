@@ -2,14 +2,17 @@ import multer from 'multer';
 
 import CustomRouter from './routes';
 import App from './app';
+
 import ProductController from './controllers/ProductController';
+import UserController from './controllers/UserController';
+import LoginController from './controllers/LoginController';
+import AvatarController from './controllers/AvatarController';
+
 import GuidMiddleware from './middlewares/GuidMiddleware';
 import ProductMiddleware from './middlewares/ProductMiddleware';
-import UserController from './controllers/UserController';
 import UserMiddleware from './middlewares/UserMiddleware';
-import LoginController from './controllers/LoginController';
 import TokenMiddleware from './middlewares/token';
-import AvatarController from './controllers/AvatarController';
+
 import uploadConfig from './utils/upload';
 
 const server = new App();
@@ -21,11 +24,7 @@ const productRouter = new CustomRouter();
 
 const tokenMiddleware = new TokenMiddleware();
 
-productRouter.addGetRoute(
-  productController.route,
-  productController.read,
-  tokenMiddleware.validate
-);
+productRouter.addGetRoute(productController.route, productController.read);
 
 productRouter.addGetRoute(
   `${productController.route}/:id`,
@@ -65,7 +64,8 @@ userRouter.addGetRoute(userController.route, userController.read);
 userRouter.addGetRoute(
   `${userController.route}/:id`,
   userController.readOne,
-  guidMiddleware.validateGuid
+  guidMiddleware.validateGuid,
+  tokenMiddleware.validate
 );
 
 userRouter.addPostRoute(
@@ -79,19 +79,26 @@ userRouter.addPostRoute(
 userRouter.addPatchRoute(
   `${userController.route}/:id/name`,
   userController.update,
+  guidMiddleware.validateGuid,
+  tokenMiddleware.validate,
   userMiddleware.validateName
 );
 
 userRouter.addDeleteRoute(
   `${userController.route}/:id`,
   userController.delete,
-  guidMiddleware.validateGuid
+  guidMiddleware.validateGuid,
+  tokenMiddleware.validate
 );
 
 const loginController = new LoginController();
 const loginRouter = new CustomRouter();
 
-loginRouter.addPostRoute('/login', loginController.login);
+loginRouter.addPostRoute(
+  '/login',
+  loginController.login,
+  userMiddleware.validateEmail
+);
 
 const avatarController = new AvatarController();
 const avatarRouter = new CustomRouter();
