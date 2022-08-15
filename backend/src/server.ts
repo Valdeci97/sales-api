@@ -1,3 +1,5 @@
+import multer from 'multer';
+
 import CustomRouter from './routes';
 import App from './app';
 import ProductController from './controllers/ProductController';
@@ -8,6 +10,7 @@ import UserMiddleware from './middlewares/UserMiddleware';
 import LoginController from './controllers/LoginController';
 import TokenMiddleware from './middlewares/token';
 import AvatarController from './controllers/AvatarController';
+import uploadConfig from './utils/upload';
 
 const server = new App();
 const guidMiddleware = new GuidMiddleware();
@@ -92,11 +95,13 @@ loginRouter.addPostRoute('/login', loginController.login);
 
 const avatarController = new AvatarController();
 const avatarRouter = new CustomRouter();
+const upload = multer(uploadConfig);
 
 avatarRouter.addPatchRoute(
   'users/avatar',
   avatarController.update,
-  tokenMiddleware.validate
+  tokenMiddleware.validate,
+  upload.single('avatar')
 );
 
 server.addRouter(productRouter.router);
