@@ -1,11 +1,9 @@
 import { PrismaClient } from '@prisma/client';
-import { hash, compare } from 'bcryptjs';
+import { hash } from 'bcryptjs';
 import Service from '.';
 import { database } from '../database';
 import { ServiceResponse } from '../types/ServiceResponse';
 import { User } from '../types/UserType';
-import { UserToken } from '../types/UserToken';
-import JsonWebToken from '../utils/jwt';
 
 const USER_NOT_FOUND = 'User does found!';
 
@@ -83,36 +81,5 @@ export default class UserService extends Service<User> {
 
   private async findByEmail(email: string): Promise<User | null> {
     return this.model.user.findFirst({ where: { email } });
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  private createUserToken(
-    status: number,
-    message: string = '',
-    data = {
-      user: {
-        id: '',
-        name: '',
-      },
-      token: '',
-    }
-  ): UserToken {
-    return [status, message, data];
-  }
-
-  public async login({ email, password }: User): Promise<UserToken> {
-    const user = await this.findByEmail(email);
-    if (!user) return this.createUserToken(400, 'Incorrect/email or password!');
-    const isSamePassword = await compare(password, user.password);
-    if (!isSamePassword)
-      return this.createUserToken(400, 'Incorrect/email or password!');
-    const token = JsonWebToken.generate({ id: user.id });
-    return this.createUserToken(200, '', {
-      user: {
-        id: user.id,
-        name: user.name,
-      },
-      token,
-    });
   }
 }
