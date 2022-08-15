@@ -109,6 +109,8 @@ server.addRouter(userRouter.router);
 server.addRouter(loginRouter.router);
 server.addRouter(avatarRouter.router);
 
+server.addStaticRoute('/files', uploadConfig.directory);
+
 server.addErrorMiddleware();
 
 export default server;
