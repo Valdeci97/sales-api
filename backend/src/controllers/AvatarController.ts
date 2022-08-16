@@ -15,7 +15,8 @@ export default class AvatarController {
     next: NextFunction
   ): Promise<Response | void> => {
     const { id } = req.user;
-    const { fileName } = req.body;
+    const fileName = req.file?.filename;
+    if (!fileName) return next(new HttpException(404, 'File not found!'));
     try {
       const [code, message] = await this.service.updateAvatar({ id, fileName });
       return res.status(code).json({ message });
