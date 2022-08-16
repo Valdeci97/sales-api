@@ -10,7 +10,7 @@ export default {
     destination: uploadPath,
     filename(_req, file, callback) {
       const hash = crypto.randomBytes(10).toString('hex');
-      const filename = `${hash}-${file}`;
+      const filename = `${hash}-${file.originalname}`;
       callback(null, filename);
     },
   }),
