@@ -105,10 +105,10 @@ const avatarRouter = new CustomRouter();
 const upload = multer(uploadConfig);
 
 avatarRouter.addPatchRoute(
-  'users/avatar',
+  '/users/avatar',
   avatarController.update,
   tokenMiddleware.validate,
-  upload.single('avatar')
+  upload.single('fileName')
 );
 
 server.addRouter(productRouter.router);
