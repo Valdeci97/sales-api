@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import HttpException from '../utils/exceptions/HttpException';
-import { Token } from '../types/token';
+import { Token } from '../types/Token';
 import JsonWebToken from '../utils/jwt';
 
 export default class TokenMiddleware {

@@ -1,8 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 import { compare } from 'bcryptjs';
 import { database } from '../database';
-import { UserToken } from '../types/UserToken';
-import { User } from '../types/UserType';
+import { UserWithToken } from '../types/UserWithToken';
 import JsonWebToken from '../utils/jwt';
 
 export default class LoginService {
@@ -12,7 +11,7 @@ export default class LoginService {
     this.model = model;
   }
 
-  public async login({ email, password }: User): Promise<UserToken> {
+  public async login({ email, password }: User): Promise<UserWithToken> {
     const user = await this.findByEmail(email);
     if (!user) return this.createUserToken(400, 'Incorrect/email or password!');
     const isSamePassword = await compare(password, user.password);
@@ -39,7 +38,7 @@ export default class LoginService {
       },
       token: '',
     }
-  ): UserToken {
+  ): UserWithToken {
     return [status, message, data];
   }
 

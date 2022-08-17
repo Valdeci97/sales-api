@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Product } from '@prisma/client';
 import { database } from '../database';
-import { Product } from '../types/ProductType';
+// import { Product } from '../types/ProductType';
 import { ServiceResponse } from '../types/ServiceResponse';
 import Service from '.';
 

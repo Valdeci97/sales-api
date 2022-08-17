@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
+import { User } from '@prisma/client';
 import Controller from '.';
 import HttpException from '../utils/exceptions/HttpException';
 import { RequestWithBody } from '../interfaces/RequestWithBody';
 import UserService from '../services/UserService';
-import { User } from '../types/UserType';
 
 export default class UserController extends Controller<User> {
   public route: string;

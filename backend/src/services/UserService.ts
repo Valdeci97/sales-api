@@ -1,9 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 import { hash } from 'bcryptjs';
 import Service from '.';
 import { database } from '../database';
 import { ServiceResponse } from '../types/ServiceResponse';
-import { User } from '../types/UserType';
 
 const USER_NOT_FOUND = 'User does found!';
 

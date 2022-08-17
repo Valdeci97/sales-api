@@ -1,9 +1,9 @@
 import { Response, NextFunction, Request } from 'express';
+import { Product } from '@prisma/client';
 import Controller from '.';
 import HttpException from '../utils/exceptions/HttpException';
 import { RequestWithBody } from '../interfaces/RequestWithBody';
 import ProductService from '../services/ProductService';
-import { Product } from '../types/ProductType';
 
 export default class ProductController extends Controller<Product> {
   private _route: string;

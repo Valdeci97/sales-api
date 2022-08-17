@@ -11,7 +11,7 @@ import AvatarController from './controllers/AvatarController';
 import GuidMiddleware from './middlewares/GuidMiddleware';
 import ProductMiddleware from './middlewares/ProductMiddleware';
 import UserMiddleware from './middlewares/UserMiddleware';
-import TokenMiddleware from './middlewares/token';
+import TokenMiddleware from './middlewares/Token';
 
 import uploadConfig from './utils/upload';
 

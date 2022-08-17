@@ -1,5 +1,4 @@
 import { ServiceResponse } from '../types/ServiceResponse';
-import { UserToken } from '../types/UserToken';
 
 export interface Model<T> {
   create(obj: T): Promise<ServiceResponse<T>>;

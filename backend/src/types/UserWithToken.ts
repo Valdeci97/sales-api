@@ -1,6 +1,6 @@
-import { User } from './UserType';
+import { User } from '@prisma/client';
 
-export type UserToken = [
+export type UserWithToken = [
   status: number,
   message: string,
   data: { user: Partial<User>; token: string }

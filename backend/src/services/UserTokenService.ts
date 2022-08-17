@@ -1,11 +1,10 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable camelcase */
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, UserToken } from '@prisma/client';
 import { database } from '../database';
 import { DbResponse } from '../types/DbResponse';
-import { DbToken } from '../types/DbToken';
 
-export default class UserToken {
+export default class UserTokenService {
   private model: PrismaClient;
 
   constructor(model: PrismaClient = database) {
@@ -34,10 +33,11 @@ export default class UserToken {
   private createDbResponse(
     status: number,
     message: string = '',
-    data: DbToken = {
+    data: UserToken = {
       id: '',
       token: '',
       user_id: '',
+      generated_at: new Date(),
     }
   ): DbResponse {
     return [status, message, data];
