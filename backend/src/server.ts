@@ -64,8 +64,7 @@ userRouter.addGetRoute(userController.route, userController.read);
 userRouter.addGetRoute(
   `${userController.route}/:id`,
   userController.readOne,
-  guidMiddleware.validateGuid,
-  tokenMiddleware.validate
+  guidMiddleware.validateGuid
 );
 
 userRouter.addPostRoute(

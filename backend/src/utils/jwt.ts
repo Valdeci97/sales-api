@@ -7,6 +7,7 @@ export default class JsonWebToken {
   public static generate(obj: string | object | Buffer): string {
     return sign(obj, authConfig.secret, {
       algorithm: 'HS512',
+      expiresIn: authConfig.expiresIn,
     });
   }
 
