@@ -7,6 +7,7 @@ import ProductController from './controllers/ProductController';
 import UserController from './controllers/UserController';
 import LoginController from './controllers/LoginController';
 import AvatarController from './controllers/AvatarController';
+import PasswordController from './controllers/PasswordController';
 
 import GuidMiddleware from './middlewares/GuidMiddleware';
 import ProductMiddleware from './middlewares/ProductMiddleware';
@@ -110,10 +111,28 @@ avatarRouter.addPatchRoute(
   upload.single('fileName')
 );
 
+const passwordController = new PasswordController();
+const passwordRouter = new CustomRouter();
+
+passwordRouter.addPostRoute(
+  '/password/forgot',
+  passwordController.generateUserToken,
+  userMiddleware.validateEmail
+);
+
+passwordRouter.addPostRoute(
+  '/password/reset',
+  passwordController.resetPassword,
+  guidMiddleware.validateBodyGuid,
+  userMiddleware.validatePassword,
+  userMiddleware.validatePasswordConfirm
+);
+
 server.addRouter(productRouter.router);
 server.addRouter(userRouter.router);
 server.addRouter(loginRouter.router);
 server.addRouter(avatarRouter.router);
+server.addRouter(passwordRouter.router);
 
 server.addStaticRoute('/files', uploadConfig.directory);
 
