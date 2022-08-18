@@ -21,9 +21,16 @@ export default class PasswordService {
     this.model = model;
   }
 
-  public async findUser(id: string): Promise<User | null> {
+  private async findUser(id: string): Promise<User | null> {
     const user = await this.model.user.findFirst({
       where: { id },
+    });
+    return user;
+  }
+
+  public async findUserByEmail(email: string): Promise<User | null> {
+    const user = await this.model.user.findFirst({
+      where: { email },
     });
     return user;
   }

@@ -1,5 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { userEmail, username, userPassword } from '../utils/joiSchemas/user';
+import {
+  userEmail,
+  username,
+  userPassword,
+  userPasswordConfirmation,
+} from '../utils/joiSchemas/user';
 
 export default class UserMiddleware {
   public validateName = (
@@ -34,6 +39,19 @@ export default class UserMiddleware {
     next: NextFunction
   ): Response | void => {
     const { error } = userPassword.validate(req.body);
+    if (error) {
+      const [code, message] = error.message.split('/');
+      return res.status(Number(code)).json({ message });
+    }
+    next();
+  }
+
+  public validatePasswordConfirm = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Response | void => {
+    const { error } = userPasswordConfirmation.validate(req.body);
     if (error) {
       const [code, message] = error.message.split('/');
       return res.status(Number(code)).json({ message });

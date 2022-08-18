@@ -42,3 +42,20 @@ export const userPassword = joi
     }),
   })
   .unknown(true);
+
+export const userPasswordConfirmation = joi
+  .object({
+    passwordConfirmation: joi
+      .string()
+      .min(8)
+      .required()
+      .valid(joi.ref('password'))
+      .messages({
+        'any.required': UNFILLED_PASSWORD,
+        'string.empty': UNFILLED_PASSWORD,
+        'string.min': MIN_PASSWORD_LENGTH,
+        'string.base': STRING_BASE,
+        'any.only': '400/Password confirmation must be equal password field.',
+      }),
+  })
+  .unknown(true);
