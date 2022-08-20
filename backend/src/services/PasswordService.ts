@@ -1,12 +1,15 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable camelcase */
-import { PrismaClient, UserToken, User } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 import { hash } from 'bcryptjs';
 import { addHours, isAfter } from 'date-fns';
+import path from 'path';
 import { database } from '../database';
 import { ResetPassword } from '../types/ResetPassword';
 import { TokenResponse } from '../types/TokenResponse';
 import { DbResponse } from '../types/DbResponse';
+import MailHandler from '../utils/MailHandler';
+// import Mail from '../utils/Mail';
 
 export default class PasswordService {
   private model: PrismaClient;
@@ -16,6 +19,16 @@ export default class PasswordService {
   private LIMIT_TO_VALIDATE_A_TOKEN = 2;
 
   private salts = 10;
+
+  private subject = 'Sales api - Mudança de senha';
+
+  private mailPath = path.resolve(
+    __dirname,
+    '..',
+    'utils',
+    'handlebars',
+    'mailView.hbs'
+  );
 
   constructor(model: PrismaClient = database) {
     this.model = model;
@@ -63,13 +76,22 @@ export default class PasswordService {
     });
   }
 
-  public async createToken(userId: string): Promise<DbResponse> {
-    const userToken = await this.model.userToken.create({
+  public async createToken(
+    { name, email }: User,
+    userId: string
+  ): Promise<DbResponse> {
+    console.log(userId);
+    const { token } = await this.model.userToken.create({
       data: {
         user_id: userId,
       },
     });
-    return this.createDbResponse(201, '', userToken);
+    await MailHandler.sendMail({
+      to: { name, email },
+      subject: this.subject,
+      templateData: { file: this.mailPath, args: { name, token } },
+    });
+    return this.createDbResponse(204);
   }
 
   private isInvalidToken(date: Date | number): boolean {
@@ -88,12 +110,7 @@ export default class PasswordService {
   private createDbResponse(
     status: number,
     message: string = '',
-    data: UserToken = {
-      id: '',
-      token: '',
-      user_id: '',
-      generated_at: new Date(),
-    }
+    data: string = ''
   ): DbResponse {
     return [status, message, data];
   }

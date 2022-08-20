@@ -18,8 +18,8 @@ export default class PasswordController {
     try {
       const user = await this.service.findUserByEmail(email);
       if (!user) return next(new HttpException(404, 'User not found!'));
-      const [code, , userToken] = await this.service.createToken(user.id);
-      return res.status(code).json({ userToken });
+      const [code] = await this.service.createToken(user, user.id);
+      return res.status(code).end();
     } catch (err) {
       next(new HttpException());
     }
