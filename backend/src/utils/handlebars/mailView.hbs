@@ -1,0 +1,37 @@
+<style>
+  .message {
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 100%;
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  .link > a{
+    text-decoration: none;
+  }
+</style>
+
+<div class="message">
+  <span>Olá {{name}}, tudo bem?</span>
+  <br/>
+  <span>
+    Recebemos um pedido para mudança de senha para a sua conta.
+  </span>
+  <br/>
+  <span>
+    Para redefinir sua senha basta clicar no link a seguir:
+  </span>
+  <span class="link">
+    <a href={{link}} target="_blank" rel="noopener noreferrer">
+      &nbsp;Mudar minha senha!
+    </a>
+  </span>
+  <br/>
+  <span>
+    Se você não solicitou mudança de senha, desconsidere esse e-mail.
+  </span>
+  <br/>
+  <span>
+    🚀 Agradecemos sua atenção! Equipe sales-api. 🚀
+  </span>
+</div>
