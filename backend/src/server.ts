@@ -81,7 +81,9 @@ userRouter.addPatchRoute(
   userController.update,
   guidMiddleware.validateGuid,
   tokenMiddleware.validate,
-  userMiddleware.validateName
+  userMiddleware.validateName,
+  userMiddleware.validateOptionalEmail,
+  userMiddleware.validateOptionalPassword
 );
 
 userRouter.addDeleteRoute(
