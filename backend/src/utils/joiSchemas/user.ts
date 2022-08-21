@@ -59,3 +59,22 @@ export const userPasswordConfirmation = joi
       }),
   })
   .unknown(true);
+
+export const userOptionalEmail = joi
+  .object({
+    email: joi.string().email().messages({
+      'string.email': INVALID_EMAIL_TYPE,
+      'string.base': STRING_BASE,
+    }),
+  })
+  .unknown(true);
+
+export const userOptionalPassword = joi
+  .object({
+    password: joi.string().min(8).messages({
+      'string.empty': UNFILLED_PASSWORD,
+      'string.min': MIN_PASSWORD_LENGTH,
+      'string.base': STRING_BASE,
+    }),
+  })
+  .unknown(true);
