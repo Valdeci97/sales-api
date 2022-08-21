@@ -77,7 +77,7 @@ userRouter.addPostRoute(
 );
 
 userRouter.addPatchRoute(
-  `${userController.route}/:id/name`,
+  `${userController.route}/:id/update-profile`,
   userController.update,
   guidMiddleware.validateGuid,
   tokenMiddleware.validate,
