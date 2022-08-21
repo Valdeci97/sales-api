@@ -9,7 +9,6 @@ import { ResetPassword } from '../types/ResetPassword';
 import { TokenResponse } from '../types/TokenResponse';
 import { DbResponse } from '../types/DbResponse';
 import MailHandler from '../utils/MailHandler';
-// import Mail from '../utils/Mail';
 
 export default class PasswordService {
   private model: PrismaClient;
