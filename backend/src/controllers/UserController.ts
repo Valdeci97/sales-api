@@ -51,14 +51,17 @@ export default class UserController extends Controller<User> {
     res: Response,
     next: NextFunction
   ): Promise<Response | void> => {
-    const { body } = req;
+    req.body.id = req.user.id;
     try {
-      const [code, message, user] = await this.service.update(body);
+      const [code, message, user] = await this.service.update(req.body);
       if (message.length > 0) return res.status(code).json({ message });
       return res.status(code).json({
         user: { id: user.id, name: user.name, avatar: user.avatar },
       });
     } catch (err) {
+      if (err instanceof HttpException) {
+        return next(new HttpException(err.status, err.message));
+      }
       next(new HttpException());
     }
   };
