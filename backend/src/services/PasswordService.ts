@@ -80,16 +80,19 @@ export default class PasswordService {
     { name, email }: User,
     userId: string
   ): Promise<DbResponse> {
-    console.log(userId);
     const { token } = await this.model.userToken.create({
-      data: {
-        user_id: userId,
-      },
+      data: { user_id: userId },
     });
     await MailHandler.sendMail({
       to: { name, email },
       subject: this.subject,
-      templateData: { file: this.mailPath, args: { name, token } },
+      templateData: {
+        file: this.mailPath,
+        args: {
+          name,
+          link: `http://localhost:3001/password/reset?token=${token}`,
+        },
+      },
     });
     return this.createDbResponse(204);
   }
