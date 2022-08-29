@@ -1,23 +1,20 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable camelcase */
-import { PrismaClient, User } from '@prisma/client';
-import { hash } from 'bcryptjs';
+import { User } from '@prisma/client';
 import { addHours, isAfter } from 'date-fns';
 import path from 'path';
-import { database } from '../database';
 import { ResetPassword } from '../types/ResetPassword';
-import { TokenResponse } from '../types/TokenResponse';
-import { DbResponse } from '../types/DbResponse';
 import MailHandler from '../utils/MailHandler';
+import UserModel from '../models/UserModel';
+import UserTokenModel from '../models/UserTokenModel';
+import HttpException from '../utils/exceptions/HttpException';
 
 export default class PasswordService {
-  private model: PrismaClient;
+  private userModel: UserModel;
+
+  private userTokenModel: UserTokenModel;
 
   private date = Date.now();
 
   private LIMIT_TO_VALIDATE_A_TOKEN = 2;
-
-  private salts = 10;
 
   private subject = 'Sales api - Mudança de senha';
 
@@ -29,59 +26,49 @@ export default class PasswordService {
     'mailView.hbs'
   );
 
-  constructor(model: PrismaClient = database) {
-    this.model = model;
+  constructor(
+    userModel: UserModel = new UserModel(),
+    userTokenModel: UserTokenModel = new UserTokenModel()
+  ) {
+    this.userModel = userModel;
+    this.userTokenModel = userTokenModel;
   }
 
   private async findUser(id: string): Promise<User | null> {
-    const user = await this.model.user.findFirst({
-      where: { id },
-    });
+    const user = await this.userModel.findUserById(id);
     return user;
   }
 
   public async findUserByEmail(email: string): Promise<User | null> {
-    const user = await this.model.user.findFirst({
-      where: { email },
-    });
+    const user = await this.userModel.findByEmail(email);
     return user;
   }
 
   public async resetPassword({
     token,
     password,
-  }: ResetPassword): Promise<TokenResponse> {
-    const userToken = await this.model.userToken.findFirst({
-      where: { token },
-    });
+  }: ResetPassword): Promise<void> {
+    const userToken = await this.userTokenModel.findByToken(token);
     if (!userToken) {
-      return this.createTokenResponse(400, 'Token does not exist!');
+      throw new HttpException(404, 'User not found');
     }
-
     const user = await this.findUser(userToken.user_id);
-    if (!user) return this.createTokenResponse(404, 'User not found!');
+    if (!user) throw new HttpException(404, 'User not found');
     if (this.isInvalidToken(userToken.generated_at)) {
-      return this.createTokenResponse(400, 'Invalid token!');
+      throw new HttpException(400, 'Invalid token!');
     }
     await this.updatePassword(user.id, password);
-    return this.createTokenResponse(200, 'Password updated successfully!');
   }
 
   private async updatePassword(id: string, password: string): Promise<void> {
-    const hashedPassword = await hash(password, this.salts);
-    await this.model.user.update({
-      where: { id },
-      data: { password: hashedPassword },
-    });
+    await this.userModel.updatePassword(password, id);
   }
 
   public async createToken(
     { name, email }: User,
     userId: string
-  ): Promise<DbResponse> {
-    const { token } = await this.model.userToken.create({
-      data: { user_id: userId },
-    });
+  ): Promise<void> {
+    const { token } = await this.userTokenModel.createToken(userId);
     await MailHandler.sendMail({
       to: { name, email },
       subject: this.subject,
@@ -93,27 +80,10 @@ export default class PasswordService {
         },
       },
     });
-    return this.createDbResponse(204);
   }
 
   private isInvalidToken(date: Date | number): boolean {
     const compare = addHours(date, this.LIMIT_TO_VALIDATE_A_TOKEN);
     return isAfter(this.date, compare);
-  }
-
-  private createTokenResponse(
-    status: number,
-    message: string = '',
-    data: ResetPassword = { token: '', password: '' }
-  ): TokenResponse {
-    return [status, message, data];
-  }
-
-  private createDbResponse(
-    status: number,
-    message: string = '',
-    data: string = ''
-  ): DbResponse {
-    return [status, message, data];
   }
 }
