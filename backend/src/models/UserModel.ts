@@ -15,8 +15,8 @@ export default class UserModel {
   private readonly equalPassword =
     'New password must be different than the old one';
 
-  constructor(model: PrismaClient = database) {
-    this.db = model;
+  constructor(db: PrismaClient = database) {
+    this.db = db;
   }
 
   public async findByEmail(email: string): Promise<User | null> {
@@ -52,6 +52,19 @@ export default class UserModel {
 
   public async destroy(id: string): Promise<void> {
     await this.db.user.delete({ where: { id } });
+  }
+
+  public async findUserById(id: string): Promise<User | null> {
+    const user = await this.db.user.findFirst({ where: { id } });
+    return user;
+  }
+
+  public async updatePassword(password: string, id: string): Promise<void> {
+    const hashed = await hash(password, this.hashSalts);
+    await this.db.user.update({
+      where: { id },
+      data: { password: hashed },
+    });
   }
 
   private async isInvalidEmailToUpdate(
