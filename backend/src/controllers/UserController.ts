@@ -21,7 +21,7 @@ export default class UserController extends Controller<User> {
     const { body } = req;
     try {
       const user = await this.service.create(body);
-      return res.status(201).json({
+      return res.status(this.statusCode.created).json({
         user: { id: user.id, name: user.name, avatar: user.avatar },
       });
     } catch (err) {
@@ -40,8 +40,12 @@ export default class UserController extends Controller<User> {
     const { id } = req.params;
     try {
       const user = await this.service.listById(id);
-      if (!user) return next(new HttpException(404, 'User not found'));
-      return res.status(200).json(user);
+      if (!user) {
+        return next(
+          new HttpException(this.statusCode.notFound, 'User not found')
+        );
+      }
+      return res.status(this.statusCode.ok).json(user);
     } catch (err) {
       next(new HttpException());
     }
@@ -55,7 +59,7 @@ export default class UserController extends Controller<User> {
     req.body.id = req.user.id;
     try {
       const user = await this.service.update(req.body);
-      return res.status(200).json({
+      return res.status(this.statusCode.ok).json({
         user: { id: user.id, name: user.name, avatar: user.avatar },
       });
     } catch (err) {
@@ -74,7 +78,7 @@ export default class UserController extends Controller<User> {
     const { id } = req.params;
     try {
       await this.service.destroy(id);
-      return res.status(204).end();
+      return res.status(this.statusCode.noContent).end();
     } catch (err) {
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
