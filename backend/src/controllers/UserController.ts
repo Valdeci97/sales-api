@@ -20,13 +20,14 @@ export default class UserController extends Controller<User> {
   ): Promise<Response | void> => {
     const { body } = req;
     try {
-      const [code, message, user] = await this.service.create(body);
-      if (code === 409) return res.status(code).json({ message });
-      return res.status(code).json({
-        message,
+      const user = await this.service.create(body);
+      return res.status(201).json({
         user: { id: user.id, name: user.name, avatar: user.avatar },
       });
     } catch (err) {
+      if (err instanceof HttpException) {
+        return next(new HttpException(err.status, err.message));
+      }
       next(new HttpException());
     }
   };
@@ -39,7 +40,7 @@ export default class UserController extends Controller<User> {
     const { id } = req.params;
     try {
       const user = await this.service.listById(id);
-      if (!user) return next(new HttpException(404, 'User not found!'));
+      if (!user) return next(new HttpException(404, 'User not found'));
       return res.status(200).json(user);
     } catch (err) {
       next(new HttpException());
@@ -53,9 +54,8 @@ export default class UserController extends Controller<User> {
   ): Promise<Response | void> => {
     req.body.id = req.user.id;
     try {
-      const [code, message, user] = await this.service.update(req.body);
-      if (message.length > 0) return res.status(code).json({ message });
-      return res.status(code).json({
+      const user = await this.service.update(req.body);
+      return res.status(200).json({
         user: { id: user.id, name: user.name, avatar: user.avatar },
       });
     } catch (err) {
@@ -73,10 +73,12 @@ export default class UserController extends Controller<User> {
   ): Promise<Response | void> => {
     const { id } = req.params;
     try {
-      const [code, message] = await this.service.destroy(id);
-      if (message.length > 0) return res.status(code).json({ message });
-      return res.status(code).end();
+      await this.service.destroy(id);
+      return res.status(204).end();
     } catch (err) {
+      if (err instanceof HttpException) {
+        return next(new HttpException(err.status, err.message));
+      }
       next(new HttpException());
     }
   };
