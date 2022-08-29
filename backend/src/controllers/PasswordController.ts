@@ -18,9 +18,12 @@ export default class PasswordController {
     try {
       const user = await this.service.findUserByEmail(email);
       if (!user) return next(new HttpException(404, 'User not found!'));
-      const [code] = await this.service.createToken(user, user.id);
-      return res.status(code).end();
+      await this.service.createToken(user, user.id);
+      return res.status(204).end();
     } catch (err) {
+      if (err instanceof HttpException) {
+        return next(new HttpException(err.status, err.message));
+      }
       next(new HttpException());
     }
   };
@@ -32,12 +35,15 @@ export default class PasswordController {
   ): Promise<Response | void> => {
     const { token, password } = req.body;
     try {
-      const [code, message] = await this.service.resetPassword({
+      await this.service.resetPassword({
         token,
         password,
       });
-      return res.status(code).json({ message });
+      return res.status(200).json({ message: 'Password update successfully' });
     } catch (err) {
+      if (err instanceof HttpException) {
+        return next(new HttpException(err.status, err.message));
+      }
       next(new HttpException());
     }
   };
