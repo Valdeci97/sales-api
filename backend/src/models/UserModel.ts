@@ -10,7 +10,7 @@ export default class UserModel {
 
   private readonly emailInUse = 'Email already in use';
 
-  private readonly notFound = 'User not found';
+  private readonly userNotFound = 'User not found';
 
   private readonly equalPassword =
     'New password must be different than the old one';
@@ -46,7 +46,7 @@ export default class UserModel {
 
   public async update(obj: User): Promise<User> {
     const user = await this.listById(obj.id);
-    if (!user) throw new HttpException(404, this.notFound);
+    if (!user) throw new HttpException(404, this.userNotFound);
     return this.handleUpdate(obj);
   }
 
