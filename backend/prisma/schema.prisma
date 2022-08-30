@@ -37,7 +37,7 @@ model UserToken {
   @@map("user_tokens")
 }
 
-model Customers {
+model Customer {
   id    String @id @default(uuid())
   name  String
   email String
