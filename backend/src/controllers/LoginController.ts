@@ -16,9 +16,8 @@ export default class LoginController {
   ): Promise<Response | void> => {
     const { body } = req;
     try {
-      const [code, message, user] = await this.service.login(body);
-      if (message.length > 0) return res.status(code).json({ message });
-      return res.status(code).json({ user });
+      const { token } = await this.service.login(body);
+      return res.status(200).json({ token });
     } catch (err) {
       next(new HttpException());
     }
