@@ -1,65 +1,43 @@
-import { PrismaClient, Product } from '@prisma/client';
-import { database } from '../database';
-// import { Product } from '../types/ProductType';
-import { ServiceResponse } from '../types/ServiceResponse';
+import { Product } from '@prisma/client';
 import Service from '.';
+import ProductModel from '../models/ProductModel';
+import HttpException from '../utils/exceptions/HttpException';
 
 const PRODUCT_NOT_FOUND = 'Product not found!';
-const NOT_FOUND = 'Product not found!';
-const CREATED = 'Product created successfully';
 
 export default class ProductService extends Service<Product> {
-  private model: PrismaClient;
+  private model: ProductModel;
 
-  constructor(model = database) {
-    super({ id: '', name: '', price: 0, quantity: 0 });
+  constructor(model: ProductModel = new ProductModel()) {
+    super();
     this.model = model;
   }
 
-  public async create({
-    name,
-    price,
-    quantity,
-  }: Product): Promise<ServiceResponse<Product>> {
-    const product = await this.model.product.create({
-      data: {
-        name,
-        price,
-        quantity,
-      },
-    });
-    return this.createResponse(201, CREATED, product);
+  public async create(obj: Product): Promise<Product> {
+    const product = await this.model.create(obj);
+    return product;
   }
 
   public async list(): Promise<Product[]> {
-    return this.model.product.findMany();
+    return this.model.list();
   }
 
   public async listById(id: string): Promise<Product | null> {
-    return this.model.product.findFirst({ where: { id } });
+    return this.model.listById(id);
   }
 
-  public async update({
-    id,
-    name,
-    price,
-    quantity,
-  }: Product): Promise<ServiceResponse<Product>> {
-    const product = this.model.product.findFirst({ where: { id } });
+  public async update(obj: Product): Promise<Product> {
+    const product = this.model.listById(obj.id);
     if (!product) {
-      return this.createResponse(404, PRODUCT_NOT_FOUND);
+      throw new HttpException(404, PRODUCT_NOT_FOUND);
     }
-    const updatedProduct = await this.model.product.update({
-      where: { id },
-      data: { name, price, quantity },
-    });
-    return this.createResponse(200, '', updatedProduct);
+    const updatedProduct = await this.model.update(obj);
+    return updatedProduct;
   }
 
-  public async destroy(id: string): Promise<ServiceResponse<Product>> {
-    const product = await this.model.product.findFirst({ where: { id } });
-    if (!product) return this.createResponse(404, NOT_FOUND);
-    await this.model.product.delete({ where: { id } });
-    return this.createResponse(204);
+  public async destroy(id: string): Promise<void> {
+    const product = await this.model.listById(id);
+    if (!product) throw new HttpException(404, PRODUCT_NOT_FOUND);
+    await this.model.destroy(id);
   }
 }
