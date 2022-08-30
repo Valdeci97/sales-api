@@ -8,6 +8,7 @@ import UserController from './controllers/UserController';
 import LoginController from './controllers/LoginController';
 import AvatarController from './controllers/AvatarController';
 import PasswordController from './controllers/PasswordController';
+import CustomerController from './controllers/CustomerController';
 
 import GuidMiddleware from './middlewares/GuidMiddleware';
 import ProductMiddleware from './middlewares/ProductMiddleware';
@@ -130,11 +131,34 @@ passwordRouter.addPostRoute(
   userMiddleware.validatePasswordConfirm
 );
 
+const customerController = new CustomerController();
+const customerRouter = new CustomRouter();
+
+customerRouter.addGetRoute(customerController.route, customerController.read);
+customerRouter.addGetRoute(
+  `${customerController.route}/:id`,
+  customerController.readOne,
+  guidMiddleware.validateGuid
+);
+customerRouter.addPostRoute(
+  customerController.route,
+  customerController.create
+);
+customerRouter.addPutRoute(
+  `${customerController.route}/:id`,
+  customerController.update
+);
+customerRouter.addDeleteRoute(
+  `${customerController.route}/:id`,
+  customerController.delete
+);
+
 server.addRouter(productRouter.router);
 server.addRouter(userRouter.router);
 server.addRouter(loginRouter.router);
 server.addRouter(avatarRouter.router);
 server.addRouter(passwordRouter.router);
+server.addRouter(customerRouter.router);
 
 server.addStaticRoute('/files', uploadConfig.directory);
 
