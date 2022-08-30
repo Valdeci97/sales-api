@@ -33,9 +33,9 @@ export default abstract class Controller<T> {
   ): Promise<typeof res | void> => {
     try {
       const obj = await this.service.list();
-      return res.status(200).json(obj);
+      return res.status(this.statusCode.ok).json(obj);
     } catch (err) {
-      next(new HttpException(500, 'Internal server error!'));
+      next(new HttpException());
     }
   };
 
