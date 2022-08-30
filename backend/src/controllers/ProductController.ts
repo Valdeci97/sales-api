@@ -24,9 +24,12 @@ export default class ProductController extends Controller<Product> {
   ): Promise<Response | void> => {
     const { body } = req;
     try {
-      const [code, message, product] = await this.service.create(body);
-      return res.status(code).json({ message, user: product });
+      const product = await this.service.create(body);
+      return res.status(this.statusCode.created).json({ product });
     } catch (err) {
+      if (err instanceof HttpException) {
+        return next(new HttpException(err.status, err.message));
+      }
       next(new HttpException());
     }
   };
@@ -39,8 +42,12 @@ export default class ProductController extends Controller<Product> {
     const { id } = req.params;
     try {
       const product = await this.service.listById(id);
-      if (!product) return next(new HttpException(404, 'Product not found!'));
-      return res.status(200).json(product);
+      if (!product) {
+        return next(
+          new HttpException(this.statusCode.notFound, 'Product not found!')
+        );
+      }
+      return res.status(this.statusCode.ok).json(product);
     } catch (err) {
       next(new HttpException());
     }
@@ -55,12 +62,12 @@ export default class ProductController extends Controller<Product> {
     const { name, quantity, price } = req.body;
     try {
       const productToUpdate = { id, name, quantity, price };
-      const [code, message, product] = await this.service.update(
-        productToUpdate
-      );
-      if (message.length > 0) return res.status(code).json({ message });
-      return res.status(code).json(product);
+      const product = await this.service.update(productToUpdate);
+      return res.status(this.statusCode.ok).json({ product });
     } catch (err) {
+      if (err instanceof HttpException) {
+        return next(new HttpException(err.status, err.message));
+      }
       next(new HttpException());
     }
   };
@@ -72,10 +79,12 @@ export default class ProductController extends Controller<Product> {
   ): Promise<Response | void> => {
     const { id } = req.params;
     try {
-      const [code, message] = await this.service.destroy(id);
-      if (message.length > 0) return res.status(code).json({ message });
-      return res.status(code).end();
+      await this.service.destroy(id);
+      return res.status(this.statusCode.noContent).end();
     } catch (err) {
+      if (err instanceof HttpException) {
+        return next(new HttpException(err.status, err.message));
+      }
       next(new HttpException());
     }
   };
