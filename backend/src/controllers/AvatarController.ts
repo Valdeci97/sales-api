@@ -18,9 +18,12 @@ export default class AvatarController {
     const fileName = req.file?.filename;
     if (!fileName) return next(new HttpException(404, 'File not found!'));
     try {
-      const [code, message] = await this.service.updateAvatar({ id, fileName });
-      return res.status(code).json({ message });
+      await this.service.updateAvatar({ id, fileName });
+      return res.status(200).json({ message: 'File updated sucessfully' });
     } catch (err) {
+      if (err instanceof HttpException) {
+        return next(new HttpException(err.status, err.message));
+      }
       next(new HttpException());
     }
   };

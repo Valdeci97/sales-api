@@ -67,6 +67,10 @@ export default class UserModel {
     });
   }
 
+  public async updateAvatar(avatar: string, id: string): Promise<void> {
+    await this.db.user.update({ where: { id }, data: { avatar } });
+  }
+
   private async isInvalidEmailToUpdate(
     email: string,
     id: string
