@@ -38,9 +38,18 @@ model UserToken {
 }
 
 model Customer {
-  id    String @id @default(uuid())
+  id    String  @id @default(uuid())
   name  String
-  email String @unique
+  email String  @unique
+  order Order[]
 
-  @@map("curstomers")
+  @@map("customers")
+}
+
+model Order {
+  id          String   @id @default(uuid())
+  customer    Customer @relation(fields: [customer_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  customer_id String
+
+  @@map("orders")
 }
