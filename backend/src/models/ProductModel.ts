@@ -41,4 +41,13 @@ export default class ProductModel {
   public async destroy(id: string): Promise<void> {
     await this.db.product.delete({ where: { id } });
   }
+
+  public async listAllByIds(ids: string[]): Promise<Product[]> {
+    const products = await this.db.product.findMany({
+      where: {
+        id: { in: ids },
+      },
+    });
+    return products;
+  }
 }
