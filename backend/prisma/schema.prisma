@@ -51,7 +51,7 @@ model Order {
   id           String         @id @default(uuid())
   customer     Customer       @relation(fields: [customer_id], references: [id], onDelete: SetNull, onUpdate: Cascade)
   customer_id  String
-  OrderProduct OrderProduct[]
+  orderProduct OrderProduct[]
 
   @@map("orders")
 }
