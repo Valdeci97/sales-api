@@ -2,7 +2,7 @@ import { Product } from '@prisma/client';
 import ProductModel from '../models/ProductModel';
 import HttpException from '../utils/exceptions/HttpException';
 
-export default class OrderProductsValidator {
+export default class OrderProductsHandler {
   private model: ProductModel;
 
   constructor(model: ProductModel = new ProductModel()) {
@@ -51,5 +51,33 @@ export default class OrderProductsValidator {
       (product, index) => product.quantity < orderProductsQuantities[index]
     );
     return availableQuantity;
+  }
+
+  private async setOrderProductsQuantity(
+    products: Product[]
+  ): Promise<Product[]> {
+    const orderProductsIds = products.map((product) => product.id);
+    const orderProducts = await this.model.listAllByIds(orderProductsIds);
+    const filteredOrderProducts = products.map(
+      ({ id, name, price, quantity }, index) => {
+        const orderProduct = { id, name, price, quantity };
+        if (id === orderProducts[index].id) {
+          orderProduct.quantity = quantity - orderProducts[index].quantity;
+        }
+        return orderProduct;
+      }
+    );
+    return filteredOrderProducts;
+  }
+
+  public async updateOrderProductsQuantity(products: Product[]): Promise<void> {
+    const orderProductsQuantities = await this.setOrderProductsQuantity(
+      products
+    );
+    await Promise.all(
+      orderProductsQuantities.map(async (product) => {
+        await this.model.update(product);
+      })
+    );
   }
 }
