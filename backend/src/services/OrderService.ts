@@ -27,7 +27,10 @@ export default class OrderService {
     this.orderProductsHandler = orderProductsHandler;
   }
 
-  public async create({ customerId, products }: OrderRequest): Promise<void> {
+  public async create({
+    customerId,
+    products,
+  }: OrderRequest): Promise<Order | null> {
     const customer = await this.customerModel.listById(customerId);
     if (!customer) throw new HttpException(404, 'Customer not found');
     const isAvailableQuantity =
@@ -41,6 +44,7 @@ export default class OrderService {
     const order = await this.orderModel.create(customer.id);
     await this.createOrderRelation(products, order);
     await this.orderProductsHandler.updateOrderProductsQuantity(products);
+    return this.orderModel.list(order.id);
   }
 
   private async createOrderRelation(
@@ -55,8 +59,9 @@ export default class OrderService {
     );
   }
 
-  public async list(id: string): Promise<(Order & OrderRelations) | null> {
+  public async list(id: string): Promise<Order & OrderRelations> {
     const order = await this.orderModel.list(id);
+    if (!order) throw new HttpException(404, 'Order not found');
     return order;
   }
 }
