@@ -7,6 +7,7 @@ import loginRouter from './routes/loginRoutes';
 import avatarRouter from './routes/avatarRoutes';
 import passwordRouter from './routes/passwordRoutes';
 import customerRouter from './routes/customerRoutes';
+import orderRouter from './routes/orderRoutes';
 
 const server = new App();
 
@@ -16,6 +17,7 @@ server.addRouter(loginRouter.router);
 server.addRouter(avatarRouter.router);
 server.addRouter(passwordRouter.router);
 server.addRouter(customerRouter.router);
+server.addRouter(orderRouter.router);
 
 server.addStaticRoute('/files', uploadConfig.directory);
 
