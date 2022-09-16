@@ -3,7 +3,7 @@ import OrderProductsHandler from '../facade/OrderProductsHandler';
 import CustomerModel from '../models/CustomerModel';
 import OrderProductsModel from '../models/OrderProducts';
 import OrderModel from '../models/Orders';
-import { OrderRequest } from '../types/Order';
+import { OrderRelations, OrderRequest } from '../types/Order';
 import HttpException from '../utils/exceptions/HttpException';
 
 export default class OrderService {
@@ -27,7 +27,7 @@ export default class OrderService {
     this.orderProductsHandler = orderProductsHandler;
   }
 
-  public async create({ customerId, products }: OrderRequest) {
+  public async create({ customerId, products }: OrderRequest): Promise<void> {
     const customer = await this.customerModel.listById(customerId);
     if (!customer) throw new HttpException(404, 'Customer not found');
     const isAvailableQuantity =
@@ -53,5 +53,10 @@ export default class OrderService {
         await this.orderProductsModel.create(orderRelation);
       })
     );
+  }
+
+  public async list(id: string): Promise<(Order & OrderRelations) | null> {
+    const order = await this.orderModel.list(id);
+    return order;
   }
 }

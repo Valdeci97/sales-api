@@ -26,8 +26,4 @@ export default class OrderModel {
     });
     return orders;
   }
-
-  // public async listById(id: string): Promise<Order | null> {
-  //   const order =
-  // }
 }
