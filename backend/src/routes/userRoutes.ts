@@ -10,12 +10,17 @@ const guidMiddleware = new GuidMiddleware();
 const tokenMiddleware = new TokenMiddleware();
 const userRouter = new CustomRouter();
 
-userRouter.addGetRoute(userController.route, userController.read);
+userRouter.addGetRoute(
+  userController.route,
+  userController.read,
+  tokenMiddleware.validate
+);
 
 userRouter.addGetRoute(
   `${userController.route}/:id`,
   userController.readOne,
-  guidMiddleware.validateGuid
+  guidMiddleware.validateGuid,
+  tokenMiddleware.validate
 );
 
 userRouter.addPostRoute(
