@@ -8,6 +8,8 @@ const productMiddleware = new ProductMiddleware();
 const guidMiddleware = new GuidMiddleware();
 const productRouter = new CustomRouter();
 
+// To-Do: verificar depois se há a necessidade de adicionar validação de token.
+
 productRouter.addGetRoute(productController.route, productController.read);
 
 productRouter.addGetRoute(
@@ -27,10 +29,10 @@ productRouter.addPostRoute(
 productRouter.addPutRoute(
   `${productController.route}/:id`,
   productController.update,
+  guidMiddleware.validateGuid,
   productMiddleware.validateName,
   productMiddleware.validatePrice,
-  productMiddleware.validateQuantity,
-  guidMiddleware.validateGuid
+  productMiddleware.validateQuantity
 );
 
 productRouter.addDeleteRoute(
