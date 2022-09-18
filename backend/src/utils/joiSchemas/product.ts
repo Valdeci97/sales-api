@@ -33,7 +33,7 @@ export const productPrice = joi
 
 export const productQuantity = joi
   .object({
-    quantity: joi.number().greater(0).required().messages({
+    quantity: joi.number().integer().greater(0).required().messages({
       'any.required': UNFILLED_PRICE,
       'number.greater': QUANTITY_GREATER_THAN_ZERO,
       'number.base': QUANTITY_BASE,
