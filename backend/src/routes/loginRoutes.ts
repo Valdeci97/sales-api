@@ -9,7 +9,8 @@ const loginRouter = new CustomRouter();
 loginRouter.addPostRoute(
   '/login',
   loginController.login,
-  userMiddleware.validateEmail
+  userMiddleware.validateEmail,
+  userMiddleware.validatePassword
 );
 
 export default loginRouter;
