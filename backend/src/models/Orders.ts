@@ -19,11 +19,24 @@ export default class OrderModel {
     return order;
   }
 
-  public async list(id: string): Promise<(Order & OrderRelations) | null> {
-    const orders = await this.db.order.findFirst({
-      where: { id },
-      include: { orderProduct: true, customer: true },
+  public async list(): Promise<(Order & OrderRelations)[]> {
+    const orders = await this.db.order.findMany({
+      include: {
+        orderProduct: true,
+        customer: { select: { name: true, email: true } },
+      },
     });
     return orders;
+  }
+
+  public async listById(id: string): Promise<(Order & OrderRelations) | null> {
+    const order = await this.db.order.findFirst({
+      where: { id },
+      include: {
+        orderProduct: true,
+        customer: { select: { name: true, email: true } },
+      },
+    });
+    return order;
   }
 }
