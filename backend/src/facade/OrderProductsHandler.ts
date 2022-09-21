@@ -48,7 +48,7 @@ export default class OrderProductsHandler {
       (product) => product.quantity
     );
     const availableQuantity = products.every(
-      (product, index) => product.quantity < orderProductsQuantities[index]
+      (product, index) => product.quantity <= orderProductsQuantities[index]
     );
     return availableQuantity;
   }
