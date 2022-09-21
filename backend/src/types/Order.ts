@@ -12,5 +12,5 @@ export type OrderProductRequest = {
 
 export type OrderRelations = {
   orderProduct: OrderProduct[];
-  customer: Customer;
+  customer: Partial<Customer>;
 };
