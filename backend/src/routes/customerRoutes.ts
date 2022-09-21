@@ -25,7 +25,6 @@ customerRouter.addPostRoute(
   customerController.route,
   customerController.create,
   tokenMiddleware.validate,
-  guidMiddleware.validateBodyGuid,
   userMiddleware.validateName,
   userMiddleware.validateEmail
 );

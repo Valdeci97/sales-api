@@ -19,7 +19,7 @@ orderRouter.addPostRoute(
 );
 orderRouter.addGetRoute(
   '/orders/:id',
-  orderController.read,
+  orderController.readById,
   tokenMiddleware.validate,
   guidMiddleware.validateGuid
 );

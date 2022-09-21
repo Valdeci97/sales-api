@@ -38,13 +38,13 @@ export default class OrderService {
     if (!isAvailableQuantity) {
       throw new HttpException(
         400,
-        'At least onde product given does not have available quantity'
+        'At least one product given does not have available quantity'
       );
     }
     const order = await this.orderModel.create(customer.id);
     await this.createOrderRelation(products, order);
     await this.orderProductsHandler.updateOrderProductsQuantity(products);
-    return this.orderModel.list(order.id);
+    return this.orderModel.listById(order.id);
   }
 
   private async createOrderRelation(
@@ -59,8 +59,13 @@ export default class OrderService {
     );
   }
 
-  public async list(id: string): Promise<Order & OrderRelations> {
-    const order = await this.orderModel.list(id);
+  public async list(): Promise<(Order & OrderRelations)[]> {
+    const orders = await this.orderModel.list();
+    return orders;
+  }
+
+  public async listById(id: string): Promise<Order & OrderRelations> {
+    const order = await this.orderModel.listById(id);
     if (!order) throw new HttpException(404, 'Order not found');
     return order;
   }

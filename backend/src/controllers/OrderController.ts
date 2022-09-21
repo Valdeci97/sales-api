@@ -34,10 +34,23 @@ export default class OrderController {
     res: Response,
     next: NextFunction
   ): Promise<Response | void> => {
+    try {
+      const orders = await this.service.list();
+      return res.status(200).json({ orders });
+    } catch (err) {
+      next(new HttpException());
+    }
+  };
+
+  public readById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
     const { id } = req.params;
     try {
-      const orders = await this.service.list(id);
-      return res.status(200).json({ orders });
+      const order = await this.service.listById(id);
+      return res.status(200).json({ order });
     } catch (err) {
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));

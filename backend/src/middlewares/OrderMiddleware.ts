@@ -22,6 +22,7 @@ export default class OrderMiddleware {
   ): Response | void => {
     const { error } = products.validate(req.body);
     if (error) {
+      console.log(error);
       const [code, message] = error.message.split('/');
       return res.status(Number(code)).json({ message });
     }
