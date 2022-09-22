@@ -34,8 +34,9 @@ export default class OrderController {
     res: Response,
     next: NextFunction
   ): Promise<Response | void> => {
+    const { id } = req.params;
     try {
-      const orders = await this.service.list();
+      const orders = await this.service.list(id);
       return res.status(200).json({ orders });
     } catch (err) {
       if (err instanceof HttpException) {
@@ -54,6 +55,24 @@ export default class OrderController {
     try {
       const order = await this.service.listById(id);
       return res.status(200).json({ order });
+    } catch (err) {
+      if (err instanceof HttpException) {
+        return next(new HttpException(err.status, err.message));
+      }
+      next(new HttpException());
+    }
+  };
+
+  public delete = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
+    const { id } = req.params;
+    const { customerId } = req.body;
+    try {
+      await this.service.delete(customerId, id);
+      return res.status(204).end();
     } catch (err) {
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));

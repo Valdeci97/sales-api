@@ -17,11 +17,24 @@ orderRouter.addPostRoute(
   orderMiddleware.validateCustomerId,
   orderMiddleware.validateProductsArray
 );
+
+orderRouter.addGetRoute(
+  '/orders/all/:id',
+  orderController.read,
+  tokenMiddleware.validate
+);
+
 orderRouter.addGetRoute(
   '/orders/:id',
   orderController.readById,
   tokenMiddleware.validate,
   guidMiddleware.validateGuid
+);
+
+orderRouter.addDeleteRoute(
+  '/orders/:id',
+  orderController.delete,
+  tokenMiddleware.validate
 );
 
 export default orderRouter;
