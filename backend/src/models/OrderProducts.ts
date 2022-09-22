@@ -19,8 +19,13 @@ export default class OrderProductsModel {
         order_id: orderId,
         quantity: product.quantity,
         price: product.price,
+        name: product.name,
         product_id: product.id,
       },
     });
+  }
+
+  public async delete(ids: string[]): Promise<void> {
+    await this.db.orderProduct.deleteMany({ where: { id: { in: ids } } });
   }
 }
