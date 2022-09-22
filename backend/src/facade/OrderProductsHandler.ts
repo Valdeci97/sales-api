@@ -62,7 +62,7 @@ export default class OrderProductsHandler {
       ({ id, name, price, quantity }, index) => {
         const orderProduct = { id, name, price, quantity };
         if (id === orderProducts[index].id) {
-          orderProduct.quantity = quantity - orderProducts[index].quantity;
+          orderProduct.quantity = orderProducts[index].quantity - quantity;
         }
         return orderProduct;
       }

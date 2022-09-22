@@ -38,6 +38,9 @@ export default class OrderController {
       const orders = await this.service.list();
       return res.status(200).json({ orders });
     } catch (err) {
+      if (err instanceof HttpException) {
+        return next(new HttpException(err.status, err.message));
+      }
       next(new HttpException());
     }
   };
