@@ -9,9 +9,14 @@ export default class OrderProductsHandler {
     this.model = model;
   }
 
-  private async existsProducts(products: Product[]): Promise<Product[]> {
+  private async getOrderProducts(products: Product[]): Promise<Product[]> {
     const orderProductsIds = products.map((product) => product.id);
-    const existsOrderProducts = await this.model.listAllByIds(orderProductsIds);
+    const orderProducts = await this.model.listAllByIds(orderProductsIds);
+    return orderProducts;
+  }
+
+  private async existsProducts(products: Product[]): Promise<Product[]> {
+    const existsOrderProducts = await this.getOrderProducts(products);
     if (existsOrderProducts.length <= 0) {
       throw new HttpException(404, 'At least one product given does not exist');
     }
@@ -53,11 +58,10 @@ export default class OrderProductsHandler {
     return availableQuantity;
   }
 
-  private async setOrderProductsQuantity(
+  private async setCreateOrderProductsQuantity(
     products: Product[]
   ): Promise<Product[]> {
-    const orderProductsIds = products.map((product) => product.id);
-    const orderProducts = await this.model.listAllByIds(orderProductsIds);
+    const orderProducts = await this.getOrderProducts(products);
     const filteredOrderProducts = products.map(
       ({ id, name, price, quantity }, index) => {
         const orderProduct = { id, name, price, quantity };
@@ -70,8 +74,39 @@ export default class OrderProductsHandler {
     return filteredOrderProducts;
   }
 
-  public async updateOrderProductsQuantity(products: Product[]): Promise<void> {
-    const orderProductsQuantities = await this.setOrderProductsQuantity(
+  private async setDeleteOrderProductsQuantity(
+    products: Product[]
+  ): Promise<Product[]> {
+    const orderProducts = await this.getOrderProducts(products);
+    const filteredOrderProducts = products.map(
+      ({ id, name, price, quantity }, index) => {
+        const orderProduct = { id, name, price, quantity };
+        if (id === orderProducts[index].id) {
+          orderProduct.quantity = orderProducts[index].quantity + quantity;
+        }
+        return orderProduct;
+      }
+    );
+    return filteredOrderProducts;
+  }
+
+  public async decreaseOrderProductsQuantity(
+    products: Product[]
+  ): Promise<void> {
+    const orderProductsQuantities = await this.setCreateOrderProductsQuantity(
+      products
+    );
+    await Promise.all(
+      orderProductsQuantities.map(async (product) => {
+        await this.model.update(product);
+      })
+    );
+  }
+
+  public async increaseOrderProductsQuantity(
+    products: Product[]
+  ): Promise<void> {
+    const orderProductsQuantities = await this.setDeleteOrderProductsQuantity(
       products
     );
     await Promise.all(
