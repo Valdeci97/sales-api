@@ -1,6 +1,7 @@
 import express, { Router, ErrorRequestHandler } from 'express';
 import cors from 'cors';
 import GlobalMiddleware from './middlewares';
+import logger from './logger';
 
 export default class App {
   public app: express.Application;
@@ -12,7 +13,7 @@ export default class App {
   }
 
   public start(PORT: number | string = 3001): void {
-    this.app.listen(PORT, () => console.log('Server running at port:', PORT));
+    this.app.listen(PORT, () => logger.info(`Server running at port: ${PORT}`));
   }
 
   public addRouter(router: Router): void {
