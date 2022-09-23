@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { User } from '@prisma/client';
 import { addHours, isAfter } from 'date-fns';
 import path from 'path';
@@ -25,6 +26,8 @@ export default class PasswordService {
     'handlebars',
     'mailView.hbs'
   );
+
+  private URL = process.env.FORGOT_PASSWORD_URL || 'http://localhost:3000';
 
   constructor(
     userModel: UserModel = new UserModel(),
@@ -76,7 +79,7 @@ export default class PasswordService {
         file: this.mailPath,
         args: {
           name,
-          link: `http://localhost:3001/password/reset?token=${token}`,
+          link: `${this.URL}/password/reset?token=${token}`,
         },
       },
     });
