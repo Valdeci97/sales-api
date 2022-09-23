@@ -1,6 +1,7 @@
 import express, { Router, ErrorRequestHandler } from 'express';
 import cors from 'cors';
 import GlobalMiddleware from './middlewares';
+import RateLimiter from './middlewares/RateLimiter';
 import logger from './logger';
 
 export default class App {
@@ -10,6 +11,7 @@ export default class App {
     this.app = express();
     this.app.use(express.json());
     this.app.use(cors());
+    this.app.use(RateLimiter.createLimiter());
   }
 
   public start(PORT: number | string = 3001): void {
