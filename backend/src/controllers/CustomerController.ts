@@ -4,6 +4,7 @@ import Controller from '.';
 import { RequestWithBody } from '../interfaces/RequestWithBody';
 import CustomerService from '../services/CustomerService';
 import HttpException from '../utils/exceptions/HttpException';
+import logger from '../logger';
 
 export default class CustomerController extends Controller<Customer> {
   public route: string;
@@ -23,6 +24,7 @@ export default class CustomerController extends Controller<Customer> {
       const customer = await this.service.create(body);
       return res.status(this.statusCode.created).json({ customer });
     } catch (err) {
+      logger.error(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }
@@ -40,6 +42,7 @@ export default class CustomerController extends Controller<Customer> {
       const customer = await this.service.listById(id);
       return res.status(this.statusCode.ok).json({ customer });
     } catch (err) {
+      logger.error(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }
@@ -57,6 +60,7 @@ export default class CustomerController extends Controller<Customer> {
       const customer = await this.service.update(req.body);
       return res.status(this.statusCode.ok).json({ customer });
     } catch (err) {
+      logger.error(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }
@@ -74,6 +78,7 @@ export default class CustomerController extends Controller<Customer> {
       await this.service.destroy(id);
       return res.status(this.statusCode.noContent).end();
     } catch (err) {
+      logger.error(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }

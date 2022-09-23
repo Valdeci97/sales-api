@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import logger from '../logger';
 import PasswordService from '../services/PasswordService';
 import HttpException from '../utils/exceptions/HttpException';
 
@@ -21,6 +22,7 @@ export default class PasswordController {
       await this.service.createToken(user, user.id);
       return res.status(204).end();
     } catch (err) {
+      logger.error(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }
@@ -41,6 +43,7 @@ export default class PasswordController {
       });
       return res.status(200).json({ message: 'Password update successfully' });
     } catch (err) {
+      logger.error(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }

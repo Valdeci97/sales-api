@@ -2,6 +2,7 @@
 /* eslint-disable camelcase */
 import { Customer, Order, OrderProduct, Product } from '@prisma/client';
 import OrderProductsHandler from '../facade/OrderProductsHandler';
+import logger from '../logger';
 import CustomerModel from '../models/CustomerModel';
 import OrderProductsModel from '../models/OrderProducts';
 import OrdersModel from '../models/OrdersModel';
@@ -51,6 +52,7 @@ export default class OrderService {
     const order = await this.ordersModel.create(customer.id);
     await this.createOrderRelation(products, order);
     await this.orderProductsHandler.decreaseOrderProductsQuantity(products);
+    logger.info('Order created');
     return this.ordersModel.listById(order.id);
   }
 
@@ -99,5 +101,6 @@ export default class OrderService {
     const orderProductsIds = order.orderProduct.map((product) => product.id);
     await this.orderProductsModel.delete(orderProductsIds);
     await this.ordersModel.destroy(order.id);
+    logger.info('Order deleted');
   }
 }

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import logger from '../logger';
 import AvatarService from '../services/AvatarService';
 import HttpException from '../utils/exceptions/HttpException';
 
@@ -21,6 +22,7 @@ export default class AvatarController {
       await this.service.updateAvatar({ id, fileName });
       return res.status(200).json({ message: 'File updated sucessfully' });
     } catch (err) {
+      logger.error(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }

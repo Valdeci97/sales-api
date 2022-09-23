@@ -4,6 +4,7 @@ import Controller from '.';
 import HttpException from '../utils/exceptions/HttpException';
 import { RequestWithBody } from '../interfaces/RequestWithBody';
 import ProductService from '../services/ProductService';
+import logger from '../logger';
 
 export default class ProductController extends Controller<Product> {
   private _route: string;
@@ -27,6 +28,7 @@ export default class ProductController extends Controller<Product> {
       const product = await this.service.create(body);
       return res.status(this.statusCode.created).json({ product });
     } catch (err) {
+      logger.error(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }
@@ -42,13 +44,12 @@ export default class ProductController extends Controller<Product> {
     const { id } = req.params;
     try {
       const product = await this.service.listById(id);
-      if (!product) {
-        return next(
-          new HttpException(this.statusCode.notFound, 'Product not found!')
-        );
-      }
       return res.status(this.statusCode.ok).json(product);
     } catch (err) {
+      logger.error(err);
+      if (err instanceof HttpException) {
+        return next(new HttpException(err.status, err.message));
+      }
       next(new HttpException());
     }
   };

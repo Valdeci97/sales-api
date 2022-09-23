@@ -4,6 +4,7 @@ import { Avatar } from '../types/Avatar';
 import config from '../utils/upload';
 import UserModel from '../models/UserModel';
 import HttpException from '../utils/exceptions/HttpException';
+import logger from '../logger';
 
 export default class AvatarService {
   private model: UserModel;
@@ -23,5 +24,6 @@ export default class AvatarService {
       }
     }
     await this.model.updateAvatar(fileName, id);
+    logger.info('Avatar updated');
   }
 }

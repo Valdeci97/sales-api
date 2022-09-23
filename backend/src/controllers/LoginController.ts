@@ -3,6 +3,7 @@ import { Response, NextFunction } from 'express';
 import HttpException from '../utils/exceptions/HttpException';
 import LoginService from '../services/LoginService';
 import { RequestWithBody } from '../interfaces/RequestWithBody';
+import logger from '../logger';
 
 export default class LoginController {
   private service: LoginService;
@@ -21,6 +22,7 @@ export default class LoginController {
       const { token } = await this.service.login(body);
       return res.status(200).json({ token });
     } catch (err) {
+      logger.error(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }

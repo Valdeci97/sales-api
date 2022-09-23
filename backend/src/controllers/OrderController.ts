@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { RequestWithBody } from '../interfaces/RequestWithBody';
+import logger from '../logger';
 import OrderService from '../services/OrderService';
 import { OrderRequest } from '../types/Order';
 import HttpException from '../utils/exceptions/HttpException';
@@ -22,6 +23,7 @@ export default class OrderController {
       if (!order) return next(new HttpException());
       return res.status(200).json({ order });
     } catch (err) {
+      logger.error(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }
@@ -39,6 +41,7 @@ export default class OrderController {
       const orders = await this.service.list(id);
       return res.status(200).json({ orders });
     } catch (err) {
+      logger.error(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }
@@ -56,6 +59,7 @@ export default class OrderController {
       const order = await this.service.listById(id);
       return res.status(200).json({ order });
     } catch (err) {
+      logger.error(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }
@@ -74,6 +78,7 @@ export default class OrderController {
       await this.service.delete(customerId, id);
       return res.status(204).end();
     } catch (err) {
+      logger.error(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }

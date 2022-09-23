@@ -1,5 +1,6 @@
 import { User } from '@prisma/client';
 import Service from '.';
+import logger from '../logger';
 import UserModel from '../models/UserModel';
 import HttpException from '../utils/exceptions/HttpException';
 
@@ -19,6 +20,7 @@ export default class UserService extends Service<User> {
     const userExists = await this.model.findByEmail(obj.email);
     if (userExists) throw new HttpException(409, this.userAlreadyExists);
     const user = await this.model.create(obj);
+    logger.info('User created');
     return user;
   }
 
@@ -26,12 +28,15 @@ export default class UserService extends Service<User> {
     return this.model.list();
   }
 
-  async listById(id: string): Promise<Partial<User> | null> {
-    return this.model.listById(id);
+  async listById(id: string): Promise<Partial<User>> {
+    const user = await this.model.listById(id);
+    if (!user) throw new HttpException(404, 'User not found');
+    return user;
   }
 
   async update(obj: User): Promise<User> {
     const user = await this.model.update(obj);
+    logger.info('User updated');
     return user;
   }
 
@@ -39,5 +44,6 @@ export default class UserService extends Service<User> {
     const user = await this.model.listById(id);
     if (!user) throw new HttpException(404, this.userNotFound);
     await this.model.destroy(id);
+    logger.info('User deleted');
   }
 }

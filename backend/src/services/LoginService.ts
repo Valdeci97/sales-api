@@ -1,5 +1,6 @@
 import { User } from '@prisma/client';
 import { compare } from 'bcryptjs';
+import logger from '../logger';
 import UserModel from '../models/UserModel';
 import { LoginToken } from '../types/UserWithToken';
 import HttpException from '../utils/exceptions/HttpException';
@@ -20,6 +21,7 @@ export default class LoginService {
       throw new HttpException(400, 'Incorrect/email or password!');
     }
     const token = JsonWebToken.generate({ id: user.id });
+    logger.info('Token created');
     return { token };
   }
 }

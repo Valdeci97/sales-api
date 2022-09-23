@@ -4,6 +4,7 @@ import Controller from '.';
 import HttpException from '../utils/exceptions/HttpException';
 import { RequestWithBody } from '../interfaces/RequestWithBody';
 import UserService from '../services/UserService';
+import logger from '../logger';
 
 export default class UserController extends Controller<User> {
   public route: string;
@@ -25,6 +26,7 @@ export default class UserController extends Controller<User> {
         user: { id: user.id, name: user.name, avatar: user.avatar },
       });
     } catch (err) {
+      logger.info(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }
@@ -40,13 +42,12 @@ export default class UserController extends Controller<User> {
     const { id } = req.params;
     try {
       const user = await this.service.listById(id);
-      if (!user) {
-        return next(
-          new HttpException(this.statusCode.notFound, 'User not found')
-        );
-      }
       return res.status(this.statusCode.ok).json(user);
     } catch (err) {
+      logger.error(err);
+      if (err instanceof HttpException) {
+        return next(new HttpException(err.status, err.message));
+      }
       next(new HttpException());
     }
   };
@@ -63,6 +64,7 @@ export default class UserController extends Controller<User> {
         user: { id: user.id, name: user.name, avatar: user.avatar },
       });
     } catch (err) {
+      logger.error(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }
@@ -80,6 +82,7 @@ export default class UserController extends Controller<User> {
       await this.service.destroy(id);
       return res.status(this.statusCode.noContent).end();
     } catch (err) {
+      logger.info(err);
       if (err instanceof HttpException) {
         return next(new HttpException(err.status, err.message));
       }
