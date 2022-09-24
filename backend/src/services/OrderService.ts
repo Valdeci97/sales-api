@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable camelcase */
 import { Customer, Order, OrderProduct, Product } from '@prisma/client';
+import CacheHandler from '../cache/CacheHandler';
 import OrderProductsHandler from '../facade/OrderProductsHandler';
 import logger from '../logger';
 import CustomerModel from '../models/CustomerModel';
@@ -18,6 +19,15 @@ export default class OrderService {
 
   private orderProductsHandler: OrderProductsHandler;
 
+  private cacheClient: CacheHandler;
+
+  private CACHE_KEY = 'sales-api-products-list';
+
+  private CACHE = {
+    INVALIDATING: 'Invalidating cache...',
+    INVALIDATED: 'Cache invalidated',
+  };
+
   constructor(
     customerModel: CustomerModel = new CustomerModel(),
     orderModel: OrdersModel = new OrdersModel(),
@@ -28,6 +38,13 @@ export default class OrderService {
     this.ordersModel = orderModel;
     this.orderProductsModel = orderProductsModel;
     this.orderProductsHandler = orderProductsHandler;
+    this.cacheClient = new CacheHandler();
+  }
+
+  private async invalidateCache(): Promise<void> {
+    logger.info(this.CACHE.INVALIDATING);
+    await this.cacheClient.invalidateCache(this.CACHE_KEY);
+    logger.info(this.CACHE.INVALIDATED);
   }
 
   private async getCustomer(id: string): Promise<Customer> {
@@ -51,6 +68,7 @@ export default class OrderService {
     }
     const order = await this.ordersModel.create(customer.id);
     await this.createOrderRelation(products, order);
+    await this.invalidateCache();
     await this.orderProductsHandler.decreaseOrderProductsQuantity(products);
     logger.info('Order created');
     return this.ordersModel.listById(order.id);
@@ -97,6 +115,7 @@ export default class OrderService {
     await this.getCustomer(customerId);
     const order = await this.listById(orderId);
     const products = this.createProductsFromOrderProducts(order.orderProduct);
+    await this.invalidateCache();
     await this.orderProductsHandler.increaseOrderProductsQuantity(products);
     const orderProductsIds = order.orderProduct.map((product) => product.id);
     await this.orderProductsModel.delete(orderProductsIds);
